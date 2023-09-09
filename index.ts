@@ -4,7 +4,10 @@ import mongoose from "mongoose";
 import { DB_USER, url } from "./utils/UserMongoDb";
 import axios from "axios";
 import { userRouter } from "./routes/routerUser";
-
+import { recipeRouter } from "./routes/routerRecipe";
+import { exerciseRouter } from "./routes/routerExercise";
+import { consumptionRouter } from "./routes/routerComsumption";
+import { dietRouter } from "./routes/routerDiet";
 
 const app = express();
 
@@ -18,7 +21,11 @@ app.use(express.json());
 app.use(cors());
 
 // Rotas
-app.use('/user', userRouter)
+app.use('/users', userRouter)
+app.use('/recipes', recipeRouter)
+app.use('/exercises', exerciseRouter)
+app.use('/diets', dietRouter)
+app.use('/consumptions', consumptionRouter)
 
 // !!!Rota Teste
 app.get("/", (_req, res) => {
@@ -31,7 +38,7 @@ const port = 3333;
 
 mongoose
     .connect(
-        url
+        url, { dbName: "HealthyVibesBD" }
     )
     .then(() => {
         app.listen(port, () => {

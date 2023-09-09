@@ -1,4 +1,10 @@
 import mongoose from 'mongoose';
 
-const Recipe = mongoose.model('Recipe')
+const schema = new mongoose.Schema({
+
+    titulo: String
+
+}, { timestamps: true })
+
+export const Recipe = mongoose.model('Recipe', schema)
 

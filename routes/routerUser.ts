@@ -1,22 +1,19 @@
 import { Router } from "express"
 import { User } from "../models/user"
-
-
+import { ErrorDescription } from "mongodb"
 
 
 export const userRouter = Router()
 
 userRouter.post('/', async (request, response) => {
     //req.body
-    const { nome, idade } = request.body
+    const { nome, email, senha } = request.body
 
-    if (!nome) {
-        return response.status(422).json({ error: 'O nome é obrigatório!' })
-    }
 
     const user = {
         nome,
-        idade
+        email,
+        senha
     }
 
     try {
@@ -25,7 +22,11 @@ userRouter.post('/', async (request, response) => {
 
         response.status(201).json({ message: 'Usuário inserido no sistema' })
 
-    } catch (error) {
+    } catch (error: unknown) {
+
+        if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
+            return response.status(500).json({ message: "Email já cadastrado" })
+
         response.status(500).json({ error: error })
     }
 })
@@ -65,10 +66,12 @@ userRouter.get('/:id', async (request, response) => {
 userRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-    const { nome } = request.body
+    const { nome, email, senha } = request.body
 
     const user = {
-        nome
+        nome,
+        email,
+        senha
     }
 
     try {
