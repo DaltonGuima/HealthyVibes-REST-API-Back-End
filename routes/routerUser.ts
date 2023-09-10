@@ -79,11 +79,12 @@ userRouter.patch('/:id', async (request, response) => {
 
     const { nome, email, senha, recipes } = request.body
 
+    const senhaHash = await bcrypt.hash(senha, 10)
 
     const user = {
         nome,
         email,
-        senha,
+        senha: senhaHash,
         recipes
     }
 
