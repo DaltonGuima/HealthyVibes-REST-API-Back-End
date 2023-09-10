@@ -12,14 +12,12 @@ userRouter.post('/', async (request, response) => {
 
     const senhaHash = await bcrypt.hash(senha, 10)
 
-
     const user = {
         nome,
         email,
         senha: senhaHash,
         recipes
     }
-
 
 
     try {
