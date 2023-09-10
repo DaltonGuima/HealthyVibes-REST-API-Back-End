@@ -6,7 +6,7 @@ import axios from "axios";
 import { userRouter } from "./routes/routerUser";
 import { recipeRouter } from "./routes/routerRecipe";
 import { exerciseRouter } from "./routes/routerExercise";
-import { consumptionRouter } from "./routes/routerComsumption";
+import { consumptionRouter } from "./routes/routerConsumption";
 import { dietRouter } from "./routes/routerDiet";
 
 const app = express();

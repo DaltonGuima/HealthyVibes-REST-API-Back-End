@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
 
-    nome: String
+    nome: String,
+
 
 }, { timestamps: true })
 

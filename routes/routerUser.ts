@@ -7,13 +7,14 @@ export const userRouter = Router()
 
 userRouter.post('/', async (request, response) => {
     //req.body
-    const { nome, email, senha } = request.body
+    const { nome, email, senha, recipes } = request.body
 
 
     const user = {
         nome,
         email,
-        senha
+        senha,
+        recipes
     }
 
     try {
@@ -34,7 +35,10 @@ userRouter.post('/', async (request, response) => {
 userRouter.get('/', async (request, response) => {
     try {
 
-        const users = await User.find()
+        const users = await User.find().populate({
+            path: 'recipes',
+            select: { "_id": 0 }
+        })
 
         response.status(200).json(users)
 
@@ -66,12 +70,15 @@ userRouter.get('/:id', async (request, response) => {
 userRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-    const { nome, email, senha } = request.body
+
+    const { nome, email, senha, recipes } = request.body
+
 
     const user = {
         nome,
         email,
-        senha
+        senha,
+        recipes
     }
 
     try {
@@ -81,7 +88,11 @@ userRouter.patch('/:id', async (request, response) => {
 
         response.status(200).json(user)
 
-    } catch (error) {
+    } catch (error: unknown) {
+
+        if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
+            return response.status(500).json({ message: "Email já cadastrado" })
+
         response.status(500).json({ error: error })
     }
 })

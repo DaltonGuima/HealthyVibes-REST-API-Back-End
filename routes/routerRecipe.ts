@@ -8,7 +8,15 @@ export const recipeRouter = Router()
 
 recipeRouter.post('/', async (request, response) => {
     //req.body
-    const { titulo } = request.body
+    const {
+        titulo,
+        ingredientes,
+        calorias,
+        carboidratos,
+        gordura,
+        proteína,
+        user
+    } = request.body
 
     if (!titulo) {
         return response.status(422).json({ error: 'O título é obrigatório!' })
@@ -16,7 +24,13 @@ recipeRouter.post('/', async (request, response) => {
     }
 
     const recipe = {
-        titulo
+        titulo,
+        ingredientes,
+        calorias,
+        carboidratos,
+        gordura,
+        proteína,
+        user
     }
 
     try {
@@ -65,10 +79,24 @@ recipeRouter.get('/:id', async (request, response) => {
 recipeRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-    const { titulo } = request.body
+    const {
+        titulo,
+        ingredientes,
+        calorias,
+        carboidratos,
+        gordura,
+        proteína,
+        user
+    } = request.body
 
     const recipe = {
-        titulo
+        titulo,
+        ingredientes,
+        calorias,
+        carboidratos,
+        gordura,
+        proteína,
+        user
     }
 
     try {

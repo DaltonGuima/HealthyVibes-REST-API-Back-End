@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
-    nome: String,
+    nome: {
+        type: String,
+        required: [true, "Usuário sem nome"]
+    },
     email: {
         type: String,
         validate: {
@@ -10,9 +13,17 @@ const schema = new mongoose.Schema({
             },
             message: "Email inválido"
         },
-        unique: true
+        unique: true,
+        required: [true, "Usuário sem Email"]
     },
-    senha: String
+    senha: {
+        type: String,
+        required: [true, "Usuário sem senha"]
+    },
+    recipes: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Recipe'
+    }]
 
 }, { timestamps: true })
 
