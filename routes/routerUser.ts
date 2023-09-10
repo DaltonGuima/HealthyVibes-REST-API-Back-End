@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { User } from "../models/user"
 import { ErrorDescription } from "mongodb"
+import bcrypt from "bcryptjs";
 
 
 export const userRouter = Router()
@@ -9,13 +10,17 @@ userRouter.post('/', async (request, response) => {
     //req.body
     const { nome, email, senha, recipes } = request.body
 
+    const senhaHash = await bcrypt.hash(senha, 10)
+
 
     const user = {
         nome,
         email,
-        senha,
+        senha: senhaHash,
         recipes
     }
+
+
 
     try {
 
@@ -26,7 +31,10 @@ userRouter.post('/', async (request, response) => {
     } catch (error: unknown) {
 
         if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
-            return response.status(500).json({ message: "Email já cadastrado" })
+            return response.status(500).json({
+                error: error,
+                message: "Email já cadastrado"
+            })
 
         response.status(500).json({ error: error })
     }
@@ -91,7 +99,10 @@ userRouter.patch('/:id', async (request, response) => {
     } catch (error: unknown) {
 
         if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
-            return response.status(500).json({ message: "Email já cadastrado" })
+            return response.status(500).json({
+                error: error,
+                message: "Email já cadastrado"
+            })
 
         response.status(500).json({ error: error })
     }
