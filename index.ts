@@ -8,6 +8,7 @@ import { recipeRouter } from "./routes/routerRecipe";
 import { exerciseRouter } from "./routes/routerExercise";
 import { consumptionRouter } from "./routes/routerConsumption";
 import { dietRouter } from "./routes/routerDiet";
+import { imcRouter } from "./routes/routerImc";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/recipes', recipeRouter)
 app.use('/exercises', exerciseRouter)
 app.use('/diets', dietRouter)
 app.use('/consumptions', consumptionRouter)
+app.use('/imcs', imcRouter)
 
 // !!!Rota Teste
 app.get("/", (_req, res) => {
