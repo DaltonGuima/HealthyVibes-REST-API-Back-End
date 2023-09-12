@@ -39,7 +39,7 @@ recipeRouter.get('/', async (request, response) => {
 recipeRouter.get('/noUsers', async (request, response) => {
     try {
 
-        const recipes = await Recipe.find({ user: null })
+        const recipes = await Recipe.find({ createdByUser: false })
 
         return response.status(200).json(recipes)
 

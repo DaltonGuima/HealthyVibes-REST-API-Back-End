@@ -4,7 +4,7 @@ const schema = new mongoose.Schema({
 
     nome: {
         type: String,
-        required: true
+        required: [true, "Nome necessário"]
     },
     descricao: String,
     video: String,
