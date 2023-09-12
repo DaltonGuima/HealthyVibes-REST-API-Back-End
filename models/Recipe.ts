@@ -8,11 +8,11 @@ const schema = new mongoose.Schema({
             "Café da Manhã", "Almoço",
             "Lanche", "Janta"
         ],
-        required: true
+        required: [true, "É necessário informar o período de refeição"]
     },
     titulo: {
         type: String,
-        required: true
+        required: [true, "Titulo não informado"]
     },
     ingredientes: [{
         nome: String,
@@ -22,7 +22,10 @@ const schema = new mongoose.Schema({
     carboidratos: Number,
     gordura: Number,
     proteína: Number,
-    createdByuser: Boolean
+    createdByUser: {
+        type: Boolean,
+        required: [true, "É necessário informar se foi criado por usuário"]
+    }
 
 }, { timestamps: true })
 

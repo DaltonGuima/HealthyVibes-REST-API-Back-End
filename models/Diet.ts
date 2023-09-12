@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
 
-    nome: String,
+    nome: {
+        type: String,
+        required: [true, "Nome é necessário"]
+    },
     recipes: [{
         type: mongoose.Types.ObjectId,
         ref: 'Recipe'
