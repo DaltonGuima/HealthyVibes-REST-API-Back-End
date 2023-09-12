@@ -21,10 +21,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Usuário sem senha"]
     },
-    recipes: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Recipe'
-    }],
+    /*     recipes: [{
+            type: mongoose.Types.ObjectId,
+            ref: 'Recipe'
+        }], */
     exercises: [{
         type: mongoose.Types.ObjectId,
         ref: 'Exercise'
