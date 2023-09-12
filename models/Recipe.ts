@@ -22,10 +22,7 @@ const schema = new mongoose.Schema({
     carboidratos: Number,
     gordura: Number,
     proteína: Number,
-    user: {
-        type: mongoose.Types.ObjectId,
-        ref: 'User'
-    }
+    createdByuser: Boolean
 
 }, { timestamps: true })
 
