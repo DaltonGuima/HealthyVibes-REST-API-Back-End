@@ -53,8 +53,85 @@ userRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
     try {
-        // findONe({ _id: id})
+
         const user = await User.findById(id)
+
+
+        if (!user) {
+            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+
+        }
+        response.status(200).json(user)
+
+    } catch (error) {
+        response.status(500).json({ error: error })
+    }
+})
+
+userRouter.get('/:id/diets', async (request, response) => {
+    const id = request.params.id
+
+    try {
+
+        const user = await User.findById(id).populate('diets')
+
+
+        if (!user) {
+            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+
+        }
+        response.status(200).json(user)
+
+    } catch (error) {
+        response.status(500).json({ error: error })
+    }
+})
+
+userRouter.get('/:id/imcs', async (request, response) => {
+    const id = request.params.id
+
+    try {
+
+        const user = await User.findById(id).populate('imcs')
+
+
+        if (!user) {
+            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+
+        }
+        response.status(200).json(user)
+
+    } catch (error) {
+        response.status(500).json({ error: error })
+    }
+})
+
+userRouter.get('/:id/exercises', async (request, response) => {
+    const id = request.params.id
+
+    try {
+
+        const user = await User.findById(id).populate('exercises')
+
+
+        if (!user) {
+            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+
+        }
+        response.status(200).json(user)
+
+    } catch (error) {
+        response.status(500).json({ error: error })
+    }
+})
+
+userRouter.get('/:id/consumptions', async (request, response) => {
+    const id = request.params.id
+
+    try {
+
+        const user = await User.findById(id).populate('consumptions')
+
 
         if (!user) {
             return response.status(422).json({ message: 'O usuário não foi encontrado' })
@@ -113,4 +190,6 @@ userRouter.delete('/:id', async (request, response) => {
         return response.status(500).json({ error: error })
     }
 })
+
+// Gets de campos
 

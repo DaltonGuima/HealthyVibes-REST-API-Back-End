@@ -42,7 +42,7 @@ dietRouter.get('/:id', async (request, response) => {
 
     try {
         // findONe({ _id: id})
-        const diet = await Diet.findById(id)
+        const diet = await Diet.findById(id).populate('recipes')
 
         if (!diet) {
             return response.status(422).json({ message: 'A dieta não foi encontrada' })

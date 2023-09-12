@@ -29,14 +29,8 @@ app.use('/diets', dietRouter)
 app.use('/consumptions', consumptionRouter)
 app.use('/imcs', imcRouter)
 
-// !!!Rota Teste
-app.get("/", (_req, res) => {
-    res.json({ message: "Respondido!!" });
-});
-
 
 const port = 3333;
-
 
 mongoose
     .connect(
