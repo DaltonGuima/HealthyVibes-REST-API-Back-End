@@ -1,30 +1,26 @@
 import { Router } from "express"
-import { User } from "../models/user"
+import { User } from "../models/User"
 import { ErrorDescription } from "mongodb"
 import bcrypt from "bcryptjs";
+import { UserInterface } from "../Interfaces/User";
 
 
 export const userRouter = Router()
 
 userRouter.post('/', async (request, response) => {
     //req.body
-    const { nome, email, senha, recipes } = request.body
-
-    const senhaHash = await bcrypt.hash(senha, 10)
-
-    const user = {
-        nome,
-        email,
-        senha: senhaHash,
-        recipes
-    }
-
+    const user: UserInterface = request.body
+    const senhaHash = await bcrypt.hash(user.senha, 10)
+    user.senha = senhaHash
 
     try {
 
-        await User.create(user)
+        const savedUser = await User.create(user)
 
-        response.status(201).json({ message: 'Usuário inserido no sistema' })
+        return response.status(201).json({
+            savedID: savedUser.id,
+            message: 'Usuário inserido no sistema'
+        })
 
     } catch (error: unknown) {
 
@@ -76,24 +72,16 @@ userRouter.get('/:id', async (request, response) => {
 userRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-
-    const { nome, email, senha, recipes } = request.body
-
-    const senhaHash = await bcrypt.hash(senha, 10)
-
-    const user = {
-        nome,
-        email,
-        senha: senhaHash,
-        recipes
-    }
+    const user: UserInterface = request.body
+    const senhaHash = await bcrypt.hash(user.senha, 10)
+    user.senha = senhaHash
 
     try {
 
         await User.findByIdAndUpdate(id, user)
 
 
-        response.status(200).json(user)
+        return response.status(200).json(user)
 
     } catch (error: unknown) {
 
@@ -103,7 +91,7 @@ userRouter.patch('/:id', async (request, response) => {
                 message: "Email já cadastrado"
             })
 
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -120,9 +108,9 @@ userRouter.delete('/:id', async (request, response) => {
 
         await User.findByIdAndDelete(id)
 
-        response.status(200).json({ message: 'Usuário deletado' })
+        return response.status(200).json({ message: 'Usuário deletado' })
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 

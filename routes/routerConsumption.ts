@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { Consumption } from "../models/Consumption"
+import { ConsumptionInterface } from "../Interfaces/Consumption"
 
 
 
@@ -7,32 +8,19 @@ import { Consumption } from "../models/Consumption"
 export const consumptionRouter = Router()
 
 consumptionRouter.post('/', async (request, response) => {
-    //req.body
-    const { aguaMl, calorias } = request.body
 
-    if (!aguaMl) {
-        return response.status(422).json({ error: 'A quantidade de água consumida em Ml é obrigatória!' })
-        return
-    }
-
-    if (!calorias) {
-        return response.status(422).json({ error: 'A quantidade de calorias consumidas é obrigatória!' })
-        return
-    }
-
-    const consumption = {
-        aguaMl,
-        calorias
-    }
+    const consumption: ConsumptionInterface = request.body
 
     try {
 
-        await Consumption.create(consumption)
-
-        response.status(201).json({ message: 'Valores de consumo inseridos no sistema' })
+        const savedConsumption = await Consumption.create(consumption)
+        return response.status(201).json({
+            saveID: savedConsumption.id,
+            message: 'Valor de consumo inserido no sistema'
+        })
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -41,10 +29,10 @@ consumptionRouter.get('/', async (request, response) => {
 
         const consumptions = await Consumption.find()
 
-        response.status(200).json(consumptions)
+        return response.status(200).json(consumptions)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -59,10 +47,10 @@ consumptionRouter.get('/:id', async (request, response) => {
             return response.status(422).json({ message: 'Valores de consumo não foram encontrados' })
 
         }
-        response.status(200).json(consumption)
+        return response.status(200).json(consumption)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -71,22 +59,18 @@ consumptionRouter.get('/:id', async (request, response) => {
 consumptionRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-    const { aguaMl, calorias } = request.body
-
-    const consumption = {
-        aguaMl,
-        calorias
-    }
+    const consumption: ConsumptionInterface = request.body
 
     try {
 
         await Consumption.findByIdAndUpdate(id, consumption)
 
 
-        response.status(200).json(consumption)
+        return response.status(200).json(consumption)
+
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -103,8 +87,8 @@ consumptionRouter.delete('/:id', async (request, response) => {
 
         await Consumption.findByIdAndDelete(id)
 
-        response.status(200).json({ message: 'Valor de consumo deletado' })
+        return response.status(200).json({ message: 'Valor de consumo deletado' })
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })

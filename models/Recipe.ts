@@ -2,6 +2,14 @@ import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
 
+    periodoRef: {
+        type: String,
+        enum: [
+            "Café da Manhã", "Almoço",
+            "Lanche", "Janta"
+        ],
+        required: true
+    },
     titulo: {
         type: String,
         required: true

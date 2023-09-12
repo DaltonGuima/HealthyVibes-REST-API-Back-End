@@ -1,46 +1,26 @@
 import { Router } from "express"
 import { Recipe } from "../models/Recipe"
-
-
+import { RecipeInterface } from "../Interfaces/Recipe"
 
 
 export const recipeRouter = Router()
 
 recipeRouter.post('/', async (request, response) => {
     //req.body
-    const {
-        titulo,
-        ingredientes,
-        calorias,
-        carboidratos,
-        gordura,
-        proteína,
-        user
-    } = request.body
-
-    if (!titulo) {
-        return response.status(422).json({ error: 'O título é obrigatório!' })
-        return
-    }
-
-    const recipe = {
-        titulo,
-        ingredientes,
-        calorias,
-        carboidratos,
-        gordura,
-        proteína,
-        user
-    }
+    const recipe: RecipeInterface = request.body
 
     try {
 
-        await Recipe.create(recipe)
+        const savedRecipe = await Recipe.create(recipe)
 
-        response.status(201).json({ message: 'Receita inserida no sistema' })
+        return response.status(201).json({
+            savedID: savedRecipe.id,
+            message: 'Receita inserida no sistema'
+        })
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
+
     }
 })
 
@@ -49,12 +29,25 @@ recipeRouter.get('/', async (request, response) => {
 
         const recipes = await Recipe.find()
 
-        response.status(200).json(recipes)
+        return response.status(200).json(recipes)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
+
+recipeRouter.get('/noUsers', async (request, response) => {
+    try {
+
+        const recipes = await Recipe.find({ user: null })
+
+        return response.status(200).json(recipes)
+
+    } catch (error) {
+        return response.status(500).json({ error: error })
+    }
+})
+
 
 recipeRouter.get('/:id', async (request, response) => {
     const id = request.params.id
@@ -67,10 +60,10 @@ recipeRouter.get('/:id', async (request, response) => {
             return response.status(422).json({ message: 'A receita não foi encontrada' })
 
         }
-        response.status(200).json(recipe)
+        return response.status(200).json(recipe)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -79,35 +72,17 @@ recipeRouter.get('/:id', async (request, response) => {
 recipeRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-    const {
-        titulo,
-        ingredientes,
-        calorias,
-        carboidratos,
-        gordura,
-        proteína,
-        user
-    } = request.body
-
-    const recipe = {
-        titulo,
-        ingredientes,
-        calorias,
-        carboidratos,
-        gordura,
-        proteína,
-        user
-    }
+    const recipe: RecipeInterface = request.body
 
     try {
 
         await Recipe.findByIdAndUpdate(id, recipe)
 
 
-        response.status(200).json(recipe)
+        return response.status(200).json(recipe)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -124,8 +99,8 @@ recipeRouter.delete('/:id', async (request, response) => {
 
         await Recipe.findByIdAndDelete(id)
 
-        response.status(200).json({ message: 'Receita deletada' })
+        return response.status(200).json({ message: 'Receita deletada' })
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })

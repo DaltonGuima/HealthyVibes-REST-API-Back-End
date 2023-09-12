@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { Diet } from "../models/Diet"
+import { DietInterface } from "../Interfaces/Diet"
 
 
 
@@ -8,25 +9,19 @@ export const dietRouter = Router()
 
 dietRouter.post('/', async (request, response) => {
     //req.body
-    const { nome } = request.body
-
-    if (!nome) {
-        return response.status(422).json({ error: 'O nome é obrigatório!' })
-        return
-    }
-
-    const diet = {
-        nome
-    }
+    const diet: DietInterface = request.body
 
     try {
 
-        await Diet.create(diet)
+        const savedDiet = await Diet.create(diet)
 
-        response.status(201).json({ message: 'Dieta inserida no sistema' })
+        return response.status(201).json({
+            savedID: savedDiet.id,
+            message: 'Dieta inserida no sistema'
+        })
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -35,10 +30,10 @@ dietRouter.get('/', async (request, response) => {
 
         const diets = await Diet.find()
 
-        response.status(200).json(diets)
+        return response.status(200).json(diets)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -53,10 +48,10 @@ dietRouter.get('/:id', async (request, response) => {
             return response.status(422).json({ message: 'A dieta não foi encontrada' })
 
         }
-        response.status(200).json(diet)
+        return response.status(200).json(diet)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -65,21 +60,16 @@ dietRouter.get('/:id', async (request, response) => {
 dietRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
-    const { nome } = request.body
-
-    const diet = {
-        nome
-    }
+    const diet: DietInterface = request.body
 
     try {
 
         await Diet.findByIdAndUpdate(id, diet)
 
-
-        response.status(200).json(diet)
+        return response.status(200).json(diet)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -96,8 +86,8 @@ dietRouter.delete('/:id', async (request, response) => {
 
         await Diet.findByIdAndDelete(id)
 
-        response.status(200).json({ message: 'Dieta deletada' })
+        return response.status(200).json({ message: 'Dieta deletada' })
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })

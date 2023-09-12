@@ -7,6 +7,11 @@ const schema = new mongoose.Schema({
     tipoConsumo: {
         type: String,
         enum: ["Água", "Calorias"]
+    },
+    user: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 }, { timestamps: true })
 

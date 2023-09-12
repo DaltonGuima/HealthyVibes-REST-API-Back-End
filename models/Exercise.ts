@@ -2,7 +2,17 @@ import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
 
-    nome: String
+    nome: {
+        type: String,
+        required: true
+    },
+    descricao: String,
+    video: String,
+    user: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
+    },
+    done: Boolean
 
 }, { timestamps: true })
 

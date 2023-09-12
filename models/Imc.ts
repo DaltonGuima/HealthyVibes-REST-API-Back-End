@@ -14,6 +14,11 @@ const schema = new mongoose.Schema({
             validator: Number.isInteger,
             message: "Altura só valor inteiro"
         }
+    },
+    user: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 
 }, { timestamps: true })

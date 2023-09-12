@@ -1,32 +1,33 @@
 import { Router } from "express"
 import { Imc } from "../models/Imc"
+import { ImcInterface } from "../Interfaces/Imc"
 
 
 export const imcRouter = Router()
 
 imcRouter.post('/', async (request, response) => {
     //req.body
-    const {  peso, altura } = request.body
+    const imc: ImcInterface = request.body
 
-    if (!peso) {
-        return response.status(422).json({ error: 'O peso é necessário!' })
-        return
+    if (!imc.peso || !imc.altura) {
+        return response.status(500).json({ message: "Altura e/ou peso não inseridos" })
     }
 
-    const imc = {
-        valor : (((peso /Math.pow(altura,2)))*10000).toFixed(2),
-        peso,
-        altura
+    const IMCvalue = {
+        ...imc,
+        valor: (((imc.peso / Math.pow(imc.altura, 2))) * 10000).toFixed(2)
     }
 
     try {
 
-        await Imc.create(imc)
-
-        response.status(201).json({ message: 'Imc definido!' })
+        const savedIMC = await Imc.create(IMCvalue)
+        return response.status(201).json({
+            savedID: savedIMC.id,
+            message: 'Imc definido!'
+        })
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -64,26 +65,22 @@ imcRouter.get('/:id', async (request, response) => {
 
 imcRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
+    const imc: ImcInterface = request.body
 
-    const { peso, altura } = request.body
-
-    if (!peso || !altura ) {
+    if (!imc.peso || !imc.altura) {
         return response.status(500).json({ message: "Altura e/ou peso não inseridos" })
     }
 
-    const imc = {
-        valor:  (((peso /Math.pow(altura,2)))*10000).toFixed(2),
-        peso,
-        altura
-
+    const IMCvalue = {
+        ...imc,
+        valor: (((imc.peso / Math.pow(imc.altura, 2))) * 10000).toFixed(2)
     }
 
     try {
 
-        await Imc.findByIdAndUpdate(id, imc)
+        await Imc.findByIdAndUpdate(id, IMCvalue)
 
-
-        return response.status(200).json(imc)
+        return response.status(200).json(IMCvalue)
 
     } catch (error) {
         return response.status(500).json({ error: error })

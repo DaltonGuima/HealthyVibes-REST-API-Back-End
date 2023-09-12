@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+
 const schema = new mongoose.Schema({
     nome: {
         type: String,
@@ -23,7 +24,24 @@ const schema = new mongoose.Schema({
     recipes: [{
         type: mongoose.Types.ObjectId,
         ref: 'Recipe'
+    }],
+    exercises: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Exercise'
+    }],
+    imcs: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Imc'
+    }],
+    diets: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Diet'
+    }],
+    consumptions: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Consumption'
     }]
+
 
 }, { timestamps: true })
 
