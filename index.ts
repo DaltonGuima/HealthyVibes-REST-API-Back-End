@@ -9,6 +9,9 @@ import { exerciseRouter } from "./routes/routerExercise";
 import { consumptionRouter } from "./routes/routerConsumption";
 import { dietRouter } from "./routes/routerDiet";
 import { imcRouter } from "./routes/routerImc";
+import 'dotenv/config'
+
+console.log(process.env.teste)
 
 const app = express();
 
