@@ -61,7 +61,7 @@ userRouter.post('/login', async (request, response) => {
 
         const passwordIsValid = bcrypt.compareSync(
             user.senha,
-            userFound.senha
+            userFound.senha || ""
         );
 
         if (!passwordIsValid) {
@@ -101,11 +101,16 @@ userRouter.post('/login', async (request, response) => {
 
 
 userRouter.get('/', async (request, response) => {
-    verifyToken(request.headers.authorization)
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token && (token as UserInterface).role == "admin"){
+        console.log("Felicidade")
+    }
+    
+
     try {
 
         const users = await User.find()
-
         return response.status(200).json(users)
 
     } catch (error) {
@@ -215,8 +220,11 @@ userRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
 
     const user: UserInterface = request.body
-    const senhaHash = await bcrypt.hash(user.senha, 10)
-    user.senha = senhaHash
+
+    if (user.senha) {
+        const senhaHash = await bcrypt.hash(user.senha, 10)
+        user.senha = senhaHash
+    }
 
     try {
 

@@ -1,13 +1,27 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/User"
-import 'dotenv/config';
+import { User } from "../models/User";
+import "dotenv/config";
+import { UserInterface } from "../Interfaces/User";
+import { verify } from 'jsonwebtoken';
 
-export async function verifyToken(req: string | undefined) {
-    if (req && req.split(' ')[0] === 'JWT') {
-        jwt.verify(req.split(' ')[1], `${process.env.API_SECRET ? process.env.API_SECRET : ""}`, function (err, decode) {
-            if (decode != null)
-                console.log((decode as jwt.JwtPayload).id)
-        })
+export async function verifyToken(req: string | undefined) : Promise<UserInterface | undefined | string> {
+    let user 
+    if (req && req.split(" ")[0] === "JWT") {
+        await verify(
+            req.split(" ")[1],
+            `${process.env.API_SECRET ? process.env.API_SECRET : ""}`,
+            async function (err, decode) {
+                user = await User.findById(
+                    (decode as jwt.JwtPayload).id
+                )
+                
+            }
+        );
+        if (user)
+            return user as UserInterface
+
+    } else {
+        return "Token Inválido";
     }
 
-}   
+}

@@ -45,7 +45,8 @@ mongoose
 
 axios.get("https://api.ipify.org?format=json").then(response => {
     console.log("\nseu ip é =", response.data);
-});
+})
+.catch();
 
 
 
