@@ -2,7 +2,10 @@ import { Router } from "express"
 import { User } from "../models/User"
 import { ErrorDescription } from "mongodb"
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { UserInterface } from "../Interfaces/User";
+import 'dotenv/config';
+import { verifyToken } from "../middlewares/authJWT";
 
 
 export const userRouter = Router()
@@ -12,7 +15,7 @@ userRouter.post('/', async (request, response) => {
     const user: UserInterface = request.body
     const senhaHash = await bcrypt.hash(user.senha, 10)
     user.senha = senhaHash
-
+    request.headers.authorization
     try {
 
         const savedUser = await User.create(user)
@@ -30,22 +33,83 @@ userRouter.post('/', async (request, response) => {
                 message: "Email já cadastrado"
             })
 
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
+
     }
 })
 
+userRouter.post('/login', async (request, response) => {
+
+
+    const user: UserInterface = request.body
+
+    try {
+        if (!user.senha)
+            return response.status(404)
+                .json({
+                    message: 'Senha não informada.'
+                });
+
+        const userFound = await User.findOne({ email: user.email })
+
+        if (!userFound) {
+            return response.status(404)
+                .json({
+                    message: 'O usuário não foi encontrado.'
+                });
+        }
+
+        const passwordIsValid = bcrypt.compareSync(
+            user.senha,
+            userFound.senha
+        );
+
+        if (!passwordIsValid) {
+            return response.status(401)
+                .json({
+                    accessToken: null,
+                    message: "Invalid Password!"
+                });
+        }
+
+        const token = jwt.sign({
+            id: userFound.id
+        }, `${process.env.API_SECRET ? process.env.API_SECRET : ""}`, {
+            expiresIn: 86400
+        });
+
+
+        return response.status(200)
+            .json({
+                user: userFound.id,
+                message: "Logado com sucesso",
+                accessToken: token
+            })
+
+
+    }
+    catch (error) {
+        return response.status(500)
+            .json({
+                message: error
+            });
+
+    }
+
+
+})
+
+
 userRouter.get('/', async (request, response) => {
+    verifyToken(request.headers.authorization)
     try {
 
-        const users = await User.find().populate({
-            path: 'recipes',
-            select: { "_id": 0 }
-        })
+        const users = await User.find()
 
-        response.status(200).json(users)
+        return response.status(200).json(users)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -58,15 +122,16 @@ userRouter.get('/:id', async (request, response) => {
 
 
         if (!user) {
-            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+            return response.status(422).json({ message: 'O usuário não foi encontrado.' })
 
         }
-        response.status(200).json(user)
+        return response.status(200).json(user)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
+
 
 userRouter.get('/:id/diets', async (request, response) => {
     const id = request.params.id
@@ -80,10 +145,10 @@ userRouter.get('/:id/diets', async (request, response) => {
             return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
         }
-        response.status(200).json(user)
+        return response.status(200).json(user)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -99,10 +164,10 @@ userRouter.get('/:id/imcs', async (request, response) => {
             return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
         }
-        response.status(200).json(user)
+        return response.status(200).json(user)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -118,10 +183,10 @@ userRouter.get('/:id/exercises', async (request, response) => {
             return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
         }
-        response.status(200).json(user)
+        return response.status(200).json(user)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -137,10 +202,10 @@ userRouter.get('/:id/consumptions', async (request, response) => {
             return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
         }
-        response.status(200).json(user)
+        return response.status(200).json(user)
 
     } catch (error) {
-        response.status(500).json({ error: error })
+        return response.status(500).json({ error: error })
     }
 })
 
@@ -191,5 +256,5 @@ userRouter.delete('/:id', async (request, response) => {
     }
 })
 
-// Gets de campos
+
 

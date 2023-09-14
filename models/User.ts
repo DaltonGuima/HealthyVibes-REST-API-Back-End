@@ -40,7 +40,12 @@ const schema = new mongoose.Schema({
     consumptions: [{
         type: mongoose.Types.ObjectId,
         ref: 'Consumption'
-    }]
+    }],
+    role: {
+        type: String,
+        enum: ["normal", "admin"],
+        required: [true, "Informe a role"]
+    }
 
 
 }, { timestamps: true })

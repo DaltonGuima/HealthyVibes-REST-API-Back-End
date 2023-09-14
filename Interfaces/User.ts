@@ -9,6 +9,7 @@ export interface UserInterface {
     email: string,
     senha: string,
     // recipes: [RecipeInterface],
+    role: string,
     exercises: [ExerciseInterface],
     imcs: [ImcInterface],
     diets: [DietInterface],

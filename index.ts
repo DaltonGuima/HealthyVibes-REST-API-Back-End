@@ -9,9 +9,7 @@ import { exerciseRouter } from "./routes/routerExercise";
 import { consumptionRouter } from "./routes/routerConsumption";
 import { dietRouter } from "./routes/routerDiet";
 import { imcRouter } from "./routes/routerImc";
-import 'dotenv/config'
-
-console.log(process.env.teste)
+import 'dotenv/config';
 
 const app = express();
 
@@ -33,16 +31,14 @@ app.use('/consumptions', consumptionRouter)
 app.use('/imcs', imcRouter)
 
 
-const port = 3333;
-
 mongoose
     .connect(
         url, { dbName: "HealthyVibesBD" }
     )
     .then(() => {
-        app.listen(port, () => {
+        app.listen(process.env.Port, () => {
             console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
-                "! \nEscutando na porta:", port);
+                "! \nEscutando na porta:", process.env.Port);
         });
     })
     .catch(err => console.log("PUTZ GRILA!!!\n", err));
