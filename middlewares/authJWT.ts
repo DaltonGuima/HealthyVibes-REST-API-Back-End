@@ -9,12 +9,11 @@ export async function verifyToken(req: string | undefined) : Promise<UserInterfa
     if (req && req.split(" ")[0] === "JWT") {
         await verify(
             req.split(" ")[1],
-            `${process.env.API_SECRET ? process.env.API_SECRET : ""}`,
+            process.env.API_SECRET || "" ,
             async function (err, decode) {
                 user = await User.findById(
                     (decode as jwt.JwtPayload).id
-                )
-                
+                )                
             }
         );
         if (user)
