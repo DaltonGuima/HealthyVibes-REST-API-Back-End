@@ -1,7 +1,8 @@
 import { Router } from "express"
 import { Recipe } from "../models/Recipe"
 import { RecipeInterface } from "../Interfaces/Recipe"
-
+import { verifyToken } from "../middlewares/authJWT"
+import { UserInterface } from "../Interfaces/User";
 
 export const recipeRouter = Router()
 
@@ -9,42 +10,77 @@ recipeRouter.post('/', async (request, response) => {
     //req.body
     const recipe: RecipeInterface = request.body
 
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const savedRecipe = await Recipe.create(recipe)
+    if (token) {
 
-        return response.status(201).json({
-            savedID: savedRecipe.id,
-            message: 'Receita inserida no sistema'
-        })
+        try {
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
 
+            if ((token as UserInterface).role == "normal") {
+                if (recipe.user == null || recipe.user == (token as UserInterface).id)
+                    recipe.user = (token as UserInterface).id
+                else
+                    return response.status(403).json({ message: "Você não pode inserir receita, de outro usuário" })
+            }
+
+            const savedRecipe = await Recipe.create(recipe)
+
+            return response.status(201).json({
+                savedID: savedRecipe.id,
+                message: 'Receita inserida no sistema'
+            })
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 recipeRouter.get('/', async (request, response) => {
-    try {
 
-        const recipes = await Recipe.find()
+    const token = await verifyToken(request.headers.authorization)
 
-        return response.status(200).json(recipes)
+    if (token) {
+        if ((token as UserInterface).role == "admin") {
+            try {
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+                const recipes = await Recipe.find()
+
+                return response.status(200).json(recipes)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
-recipeRouter.get('/noUsers', async (request, response) => {
-    try {
+recipeRouter.get('/recipesForNoAdmins', async (request, response) => {
 
-        const recipes = await Recipe.find({ createdByUser: false })
+    const token = await verifyToken(request.headers.authorization)
 
-        return response.status(200).json(recipes)
+    if (token) {
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+        try {
+
+            const recipes = await Recipe.find({ user: null })
+
+            return response.status(200).json(recipes)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -52,18 +88,28 @@ recipeRouter.get('/noUsers', async (request, response) => {
 recipeRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
-    try {
-        // findONe({ _id: id})
-        const recipe = await Recipe.findById(id)
+    const token = await verifyToken(request.headers.authorization)
 
-        if (!recipe) {
-            return response.status(422).json({ message: 'A receita não foi encontrada' })
+    if (token) {
+        try {
+            const recipe = await Recipe.findById(id)
 
+            if (!recipe) {
+                return response.status(422).json({ message: 'A receita não foi encontrada' })
+
+            }
+
+            if (recipe.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
+                return response.status(200).json(recipe)
+            else {
+                return response.status(403).json({ message: "Você não possui este acesso" })
+            }
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
         }
-        return response.status(200).json(recipe)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -71,18 +117,33 @@ recipeRouter.get('/:id', async (request, response) => {
 
 recipeRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
-
+    const token = await verifyToken(request.headers.authorization)
     const recipe: RecipeInterface = request.body
+    const recipeUserId = await Recipe.findById(id).select({ user: 1 })
+    console.log(recipeUserId)
+    if (token) {
+        /* 
+                if ((token as UserInterface).role == "normal" && (token as UserInterface).id == recipe.user) {
+                    recipe.user = (token as UserInterface).id
+                } else if ((token as UserInterface).role == "normal" && ((token as UserInterface).id != recipe.user)) {
+                    return response.status(403).json({ message: "Você não possui este acesso" })
+                } */
 
-    try {
-
-        await Recipe.findByIdAndUpdate(id, recipe)
+        try {
 
 
-        return response.status(200).json(recipe)
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            await Recipe.findByIdAndUpdate(id, recipe)
+
+
+            return response.status(200).json(recipe)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 

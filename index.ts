@@ -11,6 +11,8 @@ import { dietRouter } from "./routes/routerDiet";
 import { imcRouter } from "./routes/routerImc";
 import 'dotenv/config';
 
+
+
 const app = express();
 
 app.use(
@@ -46,7 +48,7 @@ mongoose
 axios.get("https://api.ipify.org?format=json").then(response => {
     console.log("\nseu ip é =", response.data);
 })
-.catch();
+    .catch();
 
 
 

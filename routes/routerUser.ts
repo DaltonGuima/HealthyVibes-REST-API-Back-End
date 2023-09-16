@@ -16,12 +16,12 @@ userRouter.post('/', async (request, response) => {
     const user: UserInterface = request.body
     const senhaHash = await bcrypt.hash(user.senha, 10)
     user.senha = senhaHash
-    request.headers.authorization
+
     try {
 
         if (!token || (token as UserInterface).role == "normal") {
             if (user.role == "admin")
-                return response.status(403).json({ message: "Você não possui este acesso" })
+                return response.status(403).json({ message: "Você não pode definir role como admin" })
             else
                 user.role = "normal"
         }
@@ -83,7 +83,7 @@ userRouter.post('/login', async (request, response) => {
 
         const token = jwt.sign({
             id: userFound.id
-        }, `${process.env.API_SECRET ? process.env.API_SECRET : ""}`, {
+        }, process.env.API_SECRET || "", {
             expiresIn: 86400
         });
 
@@ -92,7 +92,7 @@ userRouter.post('/login', async (request, response) => {
             .json({
                 user: userFound.id,
                 message: "Logado com sucesso",
-                accessToken: token
+                accessToken: `JWT ${token}`
             })
 
 
@@ -133,19 +133,29 @@ userRouter.get('/', async (request, response) => {
 userRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const user = await User.findById(id)
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
+
+                const user = await User.findById(id)
 
 
-        if (!user) {
-            return response.status(422).json({ message: 'O usuário não foi encontrado.' })
+                if (!user) {
+                    return response.status(422).json({ message: 'O usuário não foi encontrado.' })
 
+                }
+                return response.status(200).json(user)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
         }
-        return response.status(200).json(user)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -182,57 +192,87 @@ userRouter.get('/:id/diets', async (request, response) => {
 userRouter.get('/:id/imcs', async (request, response) => {
     const id = request.params.id
 
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const user = await User.findById(id).populate('imcs')
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
+
+                const user = await User.findById(id).populate('imcs')
 
 
-        if (!user) {
-            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+                if (!user) {
+                    return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
+                }
+                return response.status(200).json(user)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
         }
-        return response.status(200).json(user)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 userRouter.get('/:id/exercises', async (request, response) => {
     const id = request.params.id
 
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const user = await User.findById(id).populate('exercises')
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
+
+                const user = await User.findById(id).populate('exercises')
 
 
-        if (!user) {
-            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+                if (!user) {
+                    return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
+                }
+                return response.status(200).json(user)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
         }
-        return response.status(200).json(user)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 userRouter.get('/:id/consumptions', async (request, response) => {
     const id = request.params.id
 
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const user = await User.findById(id).populate('consumptions')
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
+
+                const user = await User.findById(id).populate('consumptions')
 
 
-        if (!user) {
-            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+                if (!user) {
+                    return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
+                }
+                return response.status(200).json(user)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
         }
-        return response.status(200).json(user)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -240,7 +280,7 @@ userRouter.get('/:id/consumptions', async (request, response) => {
 
 userRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
-
+    const token = await verifyToken(request.headers.authorization)
     const user: UserInterface = request.body
 
     if (user.senha) {
@@ -248,41 +288,64 @@ userRouter.patch('/:id', async (request, response) => {
         user.senha = senhaHash
     }
 
-    try {
 
-        await User.findByIdAndUpdate(id, user)
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+
+            try {
+
+                await User.findByIdAndUpdate(id, user)
 
 
-        return response.status(200).json(user)
+                return response.status(200).json(user)
 
-    } catch (error: unknown) {
+            } catch (error: unknown) {
 
-        if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
-            return response.status(500).json({
-                error: error,
-                message: "Email já cadastrado"
-            })
+                if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
+                    return response.status(500).json({
+                        error: error,
+                        message: "Email já cadastrado"
+                    })
 
-        return response.status(500).json({ error: error })
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 userRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
-
+    const token = await verifyToken(request.headers.authorization)
     const user = await User.findById(id)
 
     if (!user) {
         return response.status(422).json({ message: 'O usuário não foi encontrado' })
     }
 
-    try {
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
 
-        await User.findByIdAndDelete(id)
+            try {
 
-        return response.status(200).json({ message: 'Usuário deletado' })
-    } catch (error) {
-        return response.status(500).json({ error: error })
+                await User.findByIdAndDelete(id)
+
+                return response.status(200).json({ message: 'Usuário deletado' })
+            } catch (error) {
+
+                return response.status(500).json({ error: error })
+
+            }
+        } else {
+
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
