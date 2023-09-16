@@ -1,6 +1,8 @@
 import { Router } from "express"
 import { Imc } from "../models/Imc"
 import { ImcInterface } from "../Interfaces/Imc"
+import { verifyToken } from "../middlewares/authJWT"
+import { UserInterface } from "../Interfaces/User"
 
 
 export const imcRouter = Router()
@@ -8,6 +10,7 @@ export const imcRouter = Router()
 imcRouter.post('/', async (request, response) => {
     //req.body
     const imc: ImcInterface = request.body
+    const token = await verifyToken(request.headers.authorization)
 
     if (!imc.peso || !imc.altura) {
         return response.status(500).json({ message: "Altura e/ou peso não inseridos" })
@@ -18,16 +21,21 @@ imcRouter.post('/', async (request, response) => {
         valor: (((imc.peso / Math.pow(imc.altura, 2))) * 10000).toFixed(2)
     }
 
-    try {
+    if (token) {
+        try {
 
-        const savedIMC = await Imc.create(IMCvalue)
-        return response.status(201).json({
-            savedID: savedIMC.id,
-            message: 'Imc definido!'
-        })
+            if ((token as UserInterface).role == "normal")
+                IMCvalue.user == (token as UserInterface).id
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            const savedIMC = await Imc.create(IMCvalue)
+            return response.status(201).json({
+                savedID: savedIMC.id,
+                message: 'Imc definido!'
+            })
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
     }
 })
 
@@ -46,18 +54,27 @@ imcRouter.get('/', async (request, response) => {
 imcRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
-    try {
-        // findONe({ _id: id})
-        const imc = await Imc.findById(id)
+    const token = await verifyToken(request.headers.authorization)
+    if (token) {
+        try {
+            // findONe({ _id: id})
+            const imc = await Imc.findById(id)
 
-        if (!imc) {
-            return response.status(422).json({ message: 'Este valor de imc não foi encontrado' })
+            if (!imc) {
+                return response.status(422).json({ message: 'Este valor de imc não foi encontrado' })
 
+            }
+
+            if (imc.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
+                return response.status(200).json(imc)
+            else
+                return response.status(403).json({ message: "Você não possui este acesso" })
+
+        } catch (error) {
+            response.status(500).json({ error: error })
         }
-        response.status(200).json(imc)
-
-    } catch (error) {
-        response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 

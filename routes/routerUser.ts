@@ -12,11 +12,20 @@ export const userRouter = Router()
 
 userRouter.post('/', async (request, response) => {
     //req.body
+    const token = await verifyToken(request.headers.authorization)
     const user: UserInterface = request.body
     const senhaHash = await bcrypt.hash(user.senha, 10)
     user.senha = senhaHash
     request.headers.authorization
     try {
+
+        if (!token || (token as UserInterface).role == "normal") {
+            if (user.role == "admin")
+                return response.status(403).json({ message: "Você não possui este acesso" })
+            else
+                user.role = "normal"
+        }
+
 
         const savedUser = await User.create(user)
 
@@ -25,7 +34,7 @@ userRouter.post('/', async (request, response) => {
             message: 'Usuário inserido no sistema'
         })
 
-    } catch (error: unknown) {
+    } catch (error) {
 
         if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
             return response.status(500).json({
@@ -103,18 +112,21 @@ userRouter.post('/login', async (request, response) => {
 userRouter.get('/', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
-    if (token && (token as UserInterface).role == "admin"){
-        console.log("Felicidade")
-    }
-    
+    if (token) {
+        if ((token as UserInterface).role == "admin") {
+            try {
 
-    try {
+                const users = await User.find()
+                return response.status(200).json(users)
 
-        const users = await User.find()
-        return response.status(200).json(users)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -141,19 +153,29 @@ userRouter.get('/:id', async (request, response) => {
 userRouter.get('/:id/diets', async (request, response) => {
     const id = request.params.id
 
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const user = await User.findById(id).populate('diets')
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
 
+                const user = await User.findById(id).populate('diets')
 
-        if (!user) {
-            return response.status(422).json({ message: 'O usuário não foi encontrado' })
+                if (!user) {
+                    return response.status(422).json({ message: 'O usuário não foi encontrado' })
 
+                }
+
+                return response.status(200).json(user)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
         }
-        return response.status(200).json(user)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 

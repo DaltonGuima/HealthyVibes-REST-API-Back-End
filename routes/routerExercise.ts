@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Exercise } from "../models/Exercise";
 import { ExerciseInterface } from "../Interfaces/Exercise";
+import { UserInterface } from "../Interfaces/User";
+import { verifyToken } from "../middlewares/authJWT";
 
 export const exerciseRouter = Router();
 
@@ -21,12 +23,24 @@ exerciseRouter.post("/", async (request, response) => {
 });
 
 exerciseRouter.get("/", async (request, response) => {
-    try {
-        const exercise = await Exercise.find();
 
-        return response.status(200).json(exercise);
-    } catch (error) {
-        return response.status(500).json({ error: error });
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+        if ((token as UserInterface).role == "admin") {
+            try {
+
+                const exercises = await Exercise.find()
+                return response.status(200).json(exercises)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 });
 

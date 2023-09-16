@@ -5,6 +5,7 @@ import { DietInterface } from "./Diet";
 import { ConsumptionInterface } from "./Consumption";
 
 export interface UserInterface {
+    id: string,
     nome: string,
     email: string,
     senha: string,

@@ -1,7 +1,8 @@
 import { Router } from "express"
 import { Diet } from "../models/Diet"
 import { DietInterface } from "../Interfaces/Diet"
-
+import { UserInterface } from "../Interfaces/User";
+import { verifyToken } from "../middlewares/authJWT";
 
 
 
@@ -26,14 +27,23 @@ dietRouter.post('/', async (request, response) => {
 })
 
 dietRouter.get('/', async (request, response) => {
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const diets = await Diet.find()
+    if (token) {
+        if ((token as UserInterface).role == "admin") {
+            try {
 
-        return response.status(200).json(diets)
+                const diets = await Diet.find()
+                return response.status(200).json(diets)
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
