@@ -20,8 +20,8 @@ imcRouter.post('/', async (request, response) => {
         try {
 
             if ((token as UserInterface).role == "normal") {
-                if (imc.user == null || imc.user == (token as UserInterface).id)
-                    imc.user = (token as UserInterface).id
+                if (imc.user == null || imc.user == (token as UserInterface)._id)
+                    imc.user = (token as UserInterface)._id
                 else
                     return response.status(403).json({ message: "Você não pode inserir imc, de outro usuário" })
             }
@@ -80,7 +80,7 @@ imcRouter.get('/:id', async (request, response) => {
 
             }
 
-            if (imc.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
+            if (imc.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
                 return response.status(200).json(imc)
             else
                 return response.status(403).json({ message: "Você não possui este acesso" })
@@ -99,6 +99,7 @@ imcRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
     const imc: ImcInterface = request.body
     const token = await verifyToken(request.headers.authorization)
+    const imcUserId = await Imc.findById(id).select({ user: 1 })
 
     if (!imc.peso || !imc.altura) {
         return response.status(500).json({ message: "Altura e/ou peso não inseridos" })
@@ -110,20 +111,21 @@ imcRouter.patch('/:id', async (request, response) => {
     }
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == imc.user) {
-            try {
-
-                await Imc.findByIdAndUpdate(id, IMCvalue)
-
-                return response.status(200).json(IMCvalue)
-
-            } catch (error) {
-                return response.status(500).json({ error: error })
-            }
-        } else {
+        if (
+            (IMCvalue.user && (imcUserId?.user != IMCvalue.user)
+                && (token as UserInterface).role == "normal"
+            ))
             return response.status(403).json({ message: "Você não possui este acesso" })
-        }
 
+        try {
+
+            await Imc.findByIdAndUpdate(id, IMCvalue)
+
+            return response.status(200).json(IMCvalue)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
     } else {
         return response.status(401).json({ message: "Token Inválido" })
     }
@@ -140,7 +142,7 @@ imcRouter.delete('/:id', async (request, response) => {
 
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == imc.user) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == imc.user) {
             try {
 
                 await Imc.findByIdAndDelete(id)

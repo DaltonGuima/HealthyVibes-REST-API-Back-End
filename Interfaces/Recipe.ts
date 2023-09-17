@@ -11,6 +11,5 @@ export interface RecipeInterface {
     carboidratos: number
     gordura: number
     proteína: number
-    // createdByUser: boolean
     user: string
 }

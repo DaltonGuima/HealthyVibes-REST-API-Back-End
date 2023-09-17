@@ -19,8 +19,8 @@ dietRouter.post('/', async (request, response) => {
         try {
 
             if ((token as UserInterface).role == "normal") {
-                if (diet.user == null || diet.user == (token as UserInterface).id)
-                    diet.user = (token as UserInterface).id
+                if (diet.user == null || diet.user == (token as UserInterface)._id)
+                    diet.user = (token as UserInterface)._id
                 else
                     return response.status(403).json({ message: "Você não pode inserir dieta, de outro usuário" })
             }
@@ -65,18 +65,27 @@ dietRouter.get('/:id', async (request, response) => {
     const id = request.params.id
     const token = await verifyToken(request.headers.authorization)
 
-    try {
-        // findONe({ _id: id})
-        const diet = await Diet.findById(id).populate('recipes')
+    if (token) {
+        try {
+            // findONe({ _id: id})
+            const diet = await Diet.findById(id).populate('recipes')
 
-        if (!diet) {
-            return response.status(422).json({ message: 'A dieta não foi encontrada' })
+            if (!diet) {
+                return response.status(422).json({ message: 'A dieta não foi encontrada' })
 
+            }
+
+            if (diet.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
+                return response.status(200).json(diet)
+            else {
+                return response.status(403).json({ message: "Você não possui este acesso" })
+            }
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
         }
-        return response.status(200).json(diet)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -84,35 +93,54 @@ dietRouter.get('/:id', async (request, response) => {
 
 dietRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
+    const token = await verifyToken(request.headers.authorization)
+    const dietUserId = await Diet.findById(id).select({ user: 1 })
 
     const diet: DietInterface = request.body
+    if (token) {
+        if (
+            (diet.user && (dietUserId?.user != diet.user)
+                && (token as UserInterface).role == "normal"
+            ))
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        try {
 
-    try {
+            await Diet.findByIdAndUpdate(id, diet)
 
-        await Diet.findByIdAndUpdate(id, diet)
+            return response.status(200).json(diet)
 
-        return response.status(200).json(diet)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 dietRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
-
+    const token = await verifyToken(request.headers.authorization)
     const diet = await Diet.findById(id)
 
     if (!diet) {
         return response.status(422).json({ message: 'A dieta não foi encontrada' })
     }
 
-    try {
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == diet.user) {
+            try {
 
-        await Diet.findByIdAndDelete(id)
+                await Diet.findByIdAndDelete(id)
 
-        return response.status(200).json({ message: 'Dieta deletada' })
-    } catch (error) {
-        return response.status(500).json({ error: error })
+                return response.status(200).json({ message: 'Dieta deletada' })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })

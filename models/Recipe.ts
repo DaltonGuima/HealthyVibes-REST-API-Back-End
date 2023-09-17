@@ -22,10 +22,6 @@ const schema = new mongoose.Schema({
     carboidratos: Number,
     gordura: Number,
     proteína: Number,
-    /* createdByUser: {
-        type: Boolean,
-        required: [true, "É necessário informar se foi criado por usuário"]
-    }, */
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'User'

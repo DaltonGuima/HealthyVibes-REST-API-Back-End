@@ -1,17 +1,11 @@
-// import { RecipeInterface } from "./Recipe";
-import { ExerciseInterface } from "./Exercise";
-import { DietInterface } from "./Diet";
-import { ConsumptionInterface } from "./Consumption";
+
 
 export interface UserInterface {
-    id: string,
+    _id: string,
     nom: string,
     email: string,
     senha: string,
-    // recipes: [RecipeInterface],
     role: string,
-    exercises: [ExerciseInterface],
-    // imcs: [ImcInterface],
-    diets: [DietInterface],
-    consumption: [ConsumptionInterface]
+    exercises: [{ _id: string, done: boolean }],
+
 }

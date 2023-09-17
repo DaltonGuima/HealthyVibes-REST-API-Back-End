@@ -19,8 +19,8 @@ recipeRouter.post('/', async (request, response) => {
 
 
             if ((token as UserInterface).role == "normal") {
-                if (recipe.user == null || recipe.user == (token as UserInterface).id)
-                    recipe.user = (token as UserInterface).id
+                if (recipe.user == null || recipe.user == (token as UserInterface)._id)
+                    recipe.user = (token as UserInterface)._id
                 else
                     return response.status(403).json({ message: "Você não pode inserir receita, de outro usuário" })
             }
@@ -100,7 +100,7 @@ recipeRouter.get('/:id', async (request, response) => {
 
             }
 
-            if (recipe.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
+            if (recipe.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
                 return response.status(200).json(recipe)
             else {
                 return response.status(403).json({ message: "Você não possui este acesso" })
@@ -159,7 +159,7 @@ recipeRouter.delete('/:id', async (request, response) => {
 
     if (token) {
 
-        if (recipe.user == (token as UserInterface).id || (token as UserInterface).role == "admin") {
+        if (recipe.user == (token as UserInterface)._id || (token as UserInterface).role == "admin") {
             try {
 
                 await Recipe.findByIdAndDelete(id)

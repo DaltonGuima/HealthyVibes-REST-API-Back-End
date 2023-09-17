@@ -6,7 +6,8 @@ const schema = new mongoose.Schema({
         required: [true, "Nome necessário"]
     },
     descricao: String,
-    video: String
+    video: String,
+    agrupamento: String,
 }, { timestamps: true })
 
 export const Exercise = mongoose.model('Exercise', schema)

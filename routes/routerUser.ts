@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { UserInterface } from "../Interfaces/User";
 import 'dotenv/config';
 import { verifyToken } from "../middlewares/authJWT";
+import { Exercise } from "../models/Exercise";
 
 
 export const userRouter = Router()
@@ -14,10 +15,16 @@ userRouter.post('/', async (request, response) => {
     //req.body
     const token = await verifyToken(request.headers.authorization)
     const user: UserInterface = request.body
-    const senhaHash = await bcrypt.hash(user.senha, 10)
-    user.senha = senhaHash
+
+    if (user.senha) {
+        const senhaHash = await bcrypt.hash(user.senha, 10)
+        user.senha = senhaHash
+    }
+
 
     try {
+
+
 
         if (!token || (token as UserInterface).role == "normal") {
             if (user.role == "admin")
@@ -53,6 +60,8 @@ userRouter.post('/login', async (request, response) => {
     const user: UserInterface = request.body
 
     try {
+
+
         if (!user.senha)
             return response.status(404)
                 .json({
@@ -136,7 +145,7 @@ userRouter.get('/:id', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
             try {
 
                 const user = await User.findById(id)
@@ -166,7 +175,7 @@ userRouter.get('/:id/diets', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
             try {
 
 
@@ -197,7 +206,7 @@ userRouter.get('/:id/imcs', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
             try {
 
                 const user = await User.findById(id).populate('imcs')
@@ -226,10 +235,13 @@ userRouter.get('/:id/exercises', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
             try {
 
-                const user = await User.findById(id).populate('exercises')
+                const user = await User.findById(id).populate({
+                    path: 'exercises',
+                    populate: { path: 'exercise', model: Exercise }
+                })
 
 
                 if (!user) {
@@ -255,7 +267,7 @@ userRouter.get('/:id/consumptions', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
             try {
 
                 const user = await User.findById(id).populate('consumptions')
@@ -292,7 +304,7 @@ userRouter.patch('/:id', async (request, response) => {
 
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
 
             try {
 
@@ -329,7 +341,7 @@ userRouter.delete('/:id', async (request, response) => {
     }
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
 
             try {
 

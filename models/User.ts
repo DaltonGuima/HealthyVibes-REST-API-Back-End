@@ -21,25 +21,12 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Usuário sem senha"]
     },
-    /*     recipes: [{
-            type: mongoose.Types.ObjectId,
-            ref: 'Recipe'
-        }], */
     exercises: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Exercise',
-    }],
-    /* imcs: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Imc'
-    }], */
-    diets: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Diet'
-    }],
-    consumptions: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Consumption'
+        exercise: {
+            type: mongoose.Types.ObjectId,
+            ref: 'Exercise',
+        },
+        done: Boolean
     }],
     role: {
         type: String,
@@ -62,5 +49,17 @@ schema.virtual('imcs', {
     foreignField: 'user'
 }
 )
+
+schema.virtual('diets', {
+    ref: 'Diet',
+    localField: '_id',
+    foreignField: 'user'
+})
+
+schema.virtual('consumptions', {
+    ref: 'Consumption',
+    localField: '_id',
+    foreignField: 'user'
+})
 
 export const User = mongoose.model('User', schema)
