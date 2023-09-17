@@ -1,6 +1,6 @@
 export interface DietInterface {
     nome: string,
-    recipes: string,
+    recipes: [string],
     user: string
 
 
