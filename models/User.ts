@@ -27,12 +27,12 @@ const schema = new mongoose.Schema({
         }], */
     exercises: [{
         type: mongoose.Types.ObjectId,
-        ref: 'Exercise'
+        ref: 'Exercise',
     }],
-    imcs: [{
+    /* imcs: [{
         type: mongoose.Types.ObjectId,
         ref: 'Imc'
-    }],
+    }], */
     diets: [{
         type: mongoose.Types.ObjectId,
         ref: 'Diet'
@@ -48,6 +48,19 @@ const schema = new mongoose.Schema({
     }
 
 
-}, { timestamps: true })
+},
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+        timestamps: true
+    }
+)
+
+schema.virtual('imcs', {
+    ref: 'Imc',
+    localField: '_id',
+    foreignField: 'user'
+}
+)
 
 export const User = mongoose.model('User', schema)

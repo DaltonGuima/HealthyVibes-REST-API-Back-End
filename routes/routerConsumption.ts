@@ -57,56 +57,82 @@ consumptionRouter.get('/', async (request, response) => {
 consumptionRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
-    try {
-        // findONe({ _id: id})
-        const consumption = await Consumption.findById(id)
+    const token = await verifyToken(request.headers.authorization)
 
-        if (!consumption) {
-            return response.status(422).json({ message: 'Valores de consumo não foram encontrados' })
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
+                // findONe({ _id: id})
+                const consumption = await Consumption.findById(id)
 
+                if (!consumption) {
+                    return response.status(422).json({ message: 'Valores de consumo não foram encontrados' })
+
+                }
+                return response.status(200).json(consumption)
+
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
         }
-        return response.status(200).json(consumption)
-
-    } catch (error) {
-        return response.status(500).json({ error: error })
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 // Update - atualização de dados (PUT, PATch)
 
 consumptionRouter.patch('/:id', async (request, response) => {
-    const id = request.params.id // se alterar em cima altera o parâmetro
-
+    const id = request.params.id // se alterar em cima altera o parâmetro    
     const consumption: ConsumptionInterface = request.body
+    const token = await verifyToken(request.headers.authorization)
 
-    try {
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
 
-        await Consumption.findByIdAndUpdate(id, consumption)
+                await Consumption.findByIdAndUpdate(id, consumption)
 
 
-        return response.status(200).json(consumption)
+                return response.status(200).json(consumption)
 
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 consumptionRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
-
     const consumption = await Consumption.findById(id)
+    const token = await verifyToken(request.headers.authorization)
 
     if (!consumption) {
         return response.status(422).json({ message: 'Este valor de consumo não foi encontrado' })
     }
 
-    try {
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+            try {
 
-        await Consumption.findByIdAndDelete(id)
+                await Consumption.findByIdAndDelete(id)
 
-        return response.status(200).json({ message: 'Valor de consumo deletado' })
-    } catch (error) {
-        return response.status(500).json({ error: error })
+                return response.status(200).json({ message: 'Valor de consumo deletado' })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })

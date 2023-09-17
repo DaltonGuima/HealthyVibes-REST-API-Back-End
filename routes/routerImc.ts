@@ -4,7 +4,6 @@ import { ImcInterface } from "../Interfaces/Imc"
 import { verifyToken } from "../middlewares/authJWT"
 import { UserInterface } from "../Interfaces/User"
 
-
 export const imcRouter = Router()
 
 imcRouter.post('/', async (request, response) => {
@@ -16,16 +15,21 @@ imcRouter.post('/', async (request, response) => {
         return response.status(500).json({ message: "Altura e/ou peso não inseridos" })
     }
 
-    const IMCvalue = {
-        ...imc,
-        valor: (((imc.peso / Math.pow(imc.altura, 2))) * 10000).toFixed(2)
-    }
 
     if (token) {
         try {
 
-            if ((token as UserInterface).role == "normal")
-                IMCvalue.user == (token as UserInterface).id
+            if ((token as UserInterface).role == "normal") {
+                if (imc.user == null || imc.user == (token as UserInterface).id)
+                    imc.user = (token as UserInterface).id
+                else
+                    return response.status(403).json({ message: "Você não pode inserir imc, de outro usuário" })
+            }
+
+            const IMCvalue = {
+                ...imc,
+                valor: (((imc.peso / Math.pow(imc.altura, 2))) * 10000).toFixed(2)
+            }
 
             const savedIMC = await Imc.create(IMCvalue)
             return response.status(201).json({
@@ -40,14 +44,25 @@ imcRouter.post('/', async (request, response) => {
 })
 
 imcRouter.get('/', async (request, response) => {
-    try {
+    const token = await verifyToken(request.headers.authorization)
 
-        const imcs = await Imc.find()
+    if (token) {
+        if ((token as UserInterface).role == "admin") {
 
-        response.status(200).json(imcs)
+            try {
 
-    } catch (error) {
-        response.status(500).json({ error: error })
+                const imcs = await Imc.find()
+
+                response.status(200).json(imcs)
+
+            } catch (error) {
+                response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -83,6 +98,7 @@ imcRouter.get('/:id', async (request, response) => {
 imcRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
     const imc: ImcInterface = request.body
+    const token = await verifyToken(request.headers.authorization)
 
     if (!imc.peso || !imc.altura) {
         return response.status(500).json({ message: "Altura e/ou peso não inseridos" })
@@ -93,32 +109,51 @@ imcRouter.patch('/:id', async (request, response) => {
         valor: (((imc.peso / Math.pow(imc.altura, 2))) * 10000).toFixed(2)
     }
 
-    try {
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == imc.user) {
+            try {
 
-        await Imc.findByIdAndUpdate(id, IMCvalue)
+                await Imc.findByIdAndUpdate(id, IMCvalue)
 
-        return response.status(200).json(IMCvalue)
+                return response.status(200).json(IMCvalue)
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
 imcRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
-
+    const token = await verifyToken(request.headers.authorization)
     const imc = await Imc.findById(id)
 
     if (!imc) {
         return response.status(422).json({ message: 'O imc não foi encontrado' })
     }
 
-    try {
 
-        await Imc.findByIdAndDelete(id)
+    if (token) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == imc.user) {
+            try {
 
-        response.status(200).json({ message: 'Imc deletado' })
-    } catch (error) {
-        response.status(500).json({ error: error })
+                await Imc.findByIdAndDelete(id)
+
+                response.status(200).json({ message: 'Imc deletado' })
+            } catch (error) {
+                response.status(500).json({ error: error })
+            }
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })

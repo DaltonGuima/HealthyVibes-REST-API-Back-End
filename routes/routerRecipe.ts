@@ -4,6 +4,7 @@ import { RecipeInterface } from "../Interfaces/Recipe"
 import { verifyToken } from "../middlewares/authJWT"
 import { UserInterface } from "../Interfaces/User";
 
+
 export const recipeRouter = Router()
 
 recipeRouter.post('/', async (request, response) => {
@@ -120,18 +121,18 @@ recipeRouter.patch('/:id', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
     const recipe: RecipeInterface = request.body
     const recipeUserId = await Recipe.findById(id).select({ user: 1 })
-    console.log(recipeUserId)
+
     if (token) {
-        /* 
-                if ((token as UserInterface).role == "normal" && (token as UserInterface).id == recipe.user) {
-                    recipe.user = (token as UserInterface).id
-                } else if ((token as UserInterface).role == "normal" && ((token as UserInterface).id != recipe.user)) {
-                    return response.status(403).json({ message: "Você não possui este acesso" })
-                } */
+        if ((
+            recipeUserId?.user == null ||
+            (recipe.user && (recipeUserId?.user != recipe.user))
+        )
+            && (token as UserInterface).role == "normal"
+        )
+            return response.status(403).json({ message: "Você não possui este acesso" })
+
 
         try {
-
-
 
             await Recipe.findByIdAndUpdate(id, recipe)
 
@@ -149,19 +150,29 @@ recipeRouter.patch('/:id', async (request, response) => {
 
 recipeRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
-
+    const token = await verifyToken(request.headers.authorization)
     const recipe = await Recipe.findById(id)
 
     if (!recipe) {
         return response.status(422).json({ message: 'A receita não foi encontrada' })
     }
 
-    try {
+    if (token) {
 
-        await Recipe.findByIdAndDelete(id)
+        if (recipe.user == (token as UserInterface).id || (token as UserInterface).role == "admin") {
+            try {
 
-        return response.status(200).json({ message: 'Receita deletada' })
-    } catch (error) {
-        return response.status(500).json({ error: error })
+                await Recipe.findByIdAndDelete(id)
+
+                return response.status(200).json({ message: 'Receita deletada' })
+            } catch (error) {
+                return response.status(500).json({ error: error })
+            }
+
+        } else {
+            return response.status(403).json({ message: "Você não possui este acesso" })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })

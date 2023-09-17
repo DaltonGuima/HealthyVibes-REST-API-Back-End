@@ -169,6 +169,8 @@ userRouter.get('/:id/diets', async (request, response) => {
         if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
+
+
                 const user = await User.findById(id).populate('diets')
 
                 if (!user) {

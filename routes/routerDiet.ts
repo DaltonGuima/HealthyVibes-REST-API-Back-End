@@ -6,23 +6,37 @@ import { verifyToken } from "../middlewares/authJWT";
 
 
 
+
 export const dietRouter = Router()
 
 dietRouter.post('/', async (request, response) => {
     //req.body
     const diet: DietInterface = request.body
+    const token = await verifyToken(request.headers.authorization)
 
-    try {
 
-        const savedDiet = await Diet.create(diet)
+    if (token) {
+        try {
 
-        return response.status(201).json({
-            savedID: savedDiet.id,
-            message: 'Dieta inserida no sistema'
-        })
+            if ((token as UserInterface).role == "normal") {
+                if (diet.user == null || diet.user == (token as UserInterface).id)
+                    diet.user = (token as UserInterface).id
+                else
+                    return response.status(403).json({ message: "Você não pode inserir dieta, de outro usuário" })
+            }
 
-    } catch (error) {
-        return response.status(500).json({ error: error })
+            const savedDiet = await Diet.create(diet)
+
+            return response.status(201).json({
+                savedID: savedDiet.id,
+                message: 'Dieta inserida no sistema'
+            })
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+    } else {
+        return response.status(401).json({ message: "Token Inválido" })
     }
 })
 
@@ -49,6 +63,7 @@ dietRouter.get('/', async (request, response) => {
 
 dietRouter.get('/:id', async (request, response) => {
     const id = request.params.id
+    const token = await verifyToken(request.headers.authorization)
 
     try {
         // findONe({ _id: id})
