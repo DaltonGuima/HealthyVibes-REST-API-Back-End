@@ -99,9 +99,9 @@ dietRouter.patch('/:id', async (request, response) => {
     const diet: DietInterface = request.body
     if (token) {
         if (
-            (diet.user && (dietUserId?.user != diet.user)
-                && (token as UserInterface).role == "normal"
-            ))
+            (diet.user && (dietUserId?.user != diet.user))
+            && (token as UserInterface).role == "normal"
+        )
             return response.status(403).json({ message: "Você não possui este acesso" })
         try {
 

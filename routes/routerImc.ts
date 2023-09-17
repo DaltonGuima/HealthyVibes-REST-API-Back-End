@@ -112,9 +112,9 @@ imcRouter.patch('/:id', async (request, response) => {
 
     if (token) {
         if (
-            (IMCvalue.user && (imcUserId?.user != IMCvalue.user)
-                && (token as UserInterface).role == "normal"
-            ))
+            (IMCvalue.user && (imcUserId?.user != IMCvalue.user))
+            && (token as UserInterface).role == "normal"
+        )
             return response.status(403).json({ message: "Você não possui este acesso" })
 
         try {

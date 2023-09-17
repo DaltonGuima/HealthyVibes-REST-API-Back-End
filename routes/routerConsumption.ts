@@ -98,9 +98,9 @@ consumptionRouter.patch('/:id', async (request, response) => {
 
     if (token) {
         if (
-            (consumption.user && (consumptionUserId?.user != consumption.user)
-                && (token as UserInterface).role == "normal"
-            ))
+            (consumption.user && (consumptionUserId?.user != consumption.user))
+            && (token as UserInterface).role == "normal"
+        )
             return response.status(403).json({ message: "Você não possui este acesso" })
 
         try {
