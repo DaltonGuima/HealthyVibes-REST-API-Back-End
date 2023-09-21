@@ -26,6 +26,10 @@ const schema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'User'
     },
+    image: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Image'
+    }
 
 }, { timestamps: true })
 

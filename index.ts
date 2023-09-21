@@ -10,6 +10,7 @@ import { consumptionRouter } from "./routes/routerConsumption";
 import { dietRouter } from "./routes/routerDiet";
 import { imcRouter } from "./routes/routerImc";
 import 'dotenv/config';
+import { imageRouter } from "./routes/routerImage";
 
 
 
@@ -31,6 +32,7 @@ app.use('/exercises', exerciseRouter)
 app.use('/diets', dietRouter)
 app.use('/consumptions', consumptionRouter)
 app.use('/imcs', imcRouter)
+app.use('/images', imageRouter)
 
 
 mongoose
