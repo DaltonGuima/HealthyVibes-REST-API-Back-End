@@ -66,23 +66,18 @@ recipeRouter.get('/', async (request, response) => {
 
 recipeRouter.get('/recipesForNoAdmins', async (request, response) => {
 
-    const token = await verifyToken(request.headers.authorization)
 
-    if (token) {
+    try {
 
-        try {
+        const recipes = await Recipe.find({ user: null })
 
-            const recipes = await Recipe.find({ user: null })
+        return response.status(200).json(recipes)
 
-            return response.status(200).json(recipes)
-
-        } catch (error) {
-            return response.status(500).json({ error: error })
-        }
-
-    } else {
-        return response.status(401).json({ message: "Token Inválido" })
+    } catch (error) {
+        return response.status(500).json({ error: error })
     }
+
+
 })
 
 

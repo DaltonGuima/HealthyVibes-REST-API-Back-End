@@ -33,44 +33,33 @@ exerciseRouter.post("/", async (request, response) => {
 
 exerciseRouter.get("/", async (request, response) => {
 
-    const token = await verifyToken(request.headers.authorization)
 
-    if (token) {
+    try {
 
-        try {
+        const exercises = await Exercise.find()
+        return response.status(200).json(exercises)
 
-            const exercises = await Exercise.find()
-            return response.status(200).json(exercises)
-
-        } catch (error) {
-            return response.status(500).json({ error: error })
-        }
-
-    } else {
-        return response.status(401).json({ message: "Token Inválido" })
+    } catch (error) {
+        return response.status(500).json({ error: error })
     }
+
 });
 
 exerciseRouter.get("/:id", async (request, response) => {
     const id = request.params.id;
-    const token = await verifyToken(request.headers.authorization)
 
 
-    if (token) {
-        try {
-            const exercise = await Exercise.findById(id);
+    try {
+        const exercise = await Exercise.findById(id);
 
-            if (!exercise) {
-                return response
-                    .status(422)
-                    .json({ message: "O exercício não foi encontrado" });
-            }
-            return response.status(200).json(exercise);
-        } catch (error) {
-            return response.status(500).json({ error: error });
+        if (!exercise) {
+            return response
+                .status(422)
+                .json({ message: "O exercício não foi encontrado" });
         }
-    } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(200).json(exercise);
+    } catch (error) {
+        return response.status(500).json({ error: error });
     }
 });
 

@@ -70,24 +70,21 @@ imageRouter.get('/', async (request, response) => {
 imageRouter.get("/:id", async (request, response) => {
 
     const id = request.params.id;
-    const token = await verifyToken(request.headers.authorization)
 
-    if (token) {
-        try {
-            const image = await Image.findById(id);
 
-            if (!image) {
-                return response
-                    .status(422)
-                    .json({ message: "A imagem não foi encontrada" });
-            }
-            return response.status(200).json(image);
-        } catch (error) {
-            return response.status(500).json({ error: error });
+    try {
+        const image = await Image.findById(id);
+
+        if (!image) {
+            return response
+                .status(422)
+                .json({ message: "A imagem não foi encontrada" });
         }
-    } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(200).json(image);
+    } catch (error) {
+        return response.status(500).json({ error: error });
     }
+
 
 })
 
