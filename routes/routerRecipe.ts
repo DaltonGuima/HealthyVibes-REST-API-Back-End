@@ -64,7 +64,7 @@ recipeRouter.get('/', async (request, response) => {
     }
 })
 
-recipeRouter.get('/recipesForNoAdmins', async (request, response) => {
+recipeRouter.get('/recipesWIthNoUser', async (request, response) => {
 
     const token = await verifyToken(request.headers.authorization)
 
