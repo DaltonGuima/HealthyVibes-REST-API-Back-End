@@ -35,7 +35,7 @@ imageRouter.post('/', upload.single('image'), async (request, response) => {
         }
 
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 
 })
@@ -55,10 +55,10 @@ imageRouter.get('/', async (request, response) => {
                 return response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 
 
@@ -109,9 +109,9 @@ imageRouter.delete("/:id", async (request, response) => {
                 return response.status(500).json({ error: error });
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })

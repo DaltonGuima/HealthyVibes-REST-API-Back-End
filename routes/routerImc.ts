@@ -23,7 +23,7 @@ imcRouter.post('/', async (request, response) => {
                 if (imc.user == null || imc.user == (token as UserInterface)._id)
                     imc.user = (token as UserInterface)._id
                 else
-                    return response.status(403).json({ message: "Você não pode inserir imc, de outro usuário" })
+                    return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
             }
 
             const IMCvalue = {
@@ -40,6 +40,8 @@ imcRouter.post('/', async (request, response) => {
         } catch (error) {
             return response.status(500).json({ error: error })
         }
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -59,10 +61,10 @@ imcRouter.get('/', async (request, response) => {
                 response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -83,13 +85,13 @@ imcRouter.get('/:id', async (request, response) => {
             if (imc.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
                 return response.status(200).json(imc)
             else
-                return response.status(403).json({ message: "Você não possui este acesso" })
+                return response.status(401).json({ message: "Você não possui este acesso" })
 
         } catch (error) {
             response.status(500).json({ error: error })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -115,7 +117,7 @@ imcRouter.patch('/:id', async (request, response) => {
             (IMCvalue.user && (imcUserId?.user != IMCvalue.user))
             && (token as UserInterface).role == "normal"
         )
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
 
         try {
 
@@ -127,7 +129,7 @@ imcRouter.patch('/:id', async (request, response) => {
             return response.status(500).json({ error: error })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -152,10 +154,10 @@ imcRouter.delete('/:id', async (request, response) => {
                 response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
 
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })

@@ -18,7 +18,7 @@ consumptionRouter.post('/', async (request, response) => {
                 if (consumption.user == null || consumption.user == (token as UserInterface)._id)
                     consumption.user = (token as UserInterface)._id
                 else
-                    return response.status(403).json({ message: "Você não pode inserir imc, de outro usuário" })
+                    return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
             }
 
             const savedConsumption = await Consumption.create(consumption)
@@ -32,7 +32,7 @@ consumptionRouter.post('/', async (request, response) => {
         }
 
     } else {
-        return response.status(401).json({ message: "Token inválido" })
+        return response.status(403).json({ message: "Token inválido" })
     }
 })
 
@@ -51,10 +51,10 @@ consumptionRouter.get('/', async (request, response) => {
                 return response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -76,7 +76,7 @@ consumptionRouter.get('/:id', async (request, response) => {
             if (consumption.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
                 return response.status(200).json(consumption)
             else
-                return response.status(403).json({ message: "Você não possui este acesso" })
+                return response.status(401).json({ message: "Você não possui este acesso" })
 
         } catch (error) {
             return response.status(500).json({ error: error })
@@ -84,7 +84,7 @@ consumptionRouter.get('/:id', async (request, response) => {
 
     }
     else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -101,7 +101,7 @@ consumptionRouter.patch('/:id', async (request, response) => {
             (consumption.user && (consumptionUserId?.user != consumption.user))
             && (token as UserInterface).role == "normal"
         )
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
 
         try {
 
@@ -116,7 +116,7 @@ consumptionRouter.patch('/:id', async (request, response) => {
         }
 
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -140,9 +140,9 @@ consumptionRouter.delete('/:id', async (request, response) => {
                 return response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })

@@ -22,7 +22,7 @@ recipeRouter.post('/', async (request, response) => {
                 if (recipe.user == null || recipe.user == (token as UserInterface)._id)
                     recipe.user = (token as UserInterface)._id
                 else
-                    return response.status(403).json({ message: "Você não pode inserir receita, de outro usuário" })
+                    return response.status(401).json({ message: "Você não pode inserir receita, de outro usuário" })
             }
 
             const savedRecipe = await Recipe.create(recipe)
@@ -37,7 +37,7 @@ recipeRouter.post('/', async (request, response) => {
 
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -57,10 +57,10 @@ recipeRouter.get('/', async (request, response) => {
                 return response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -98,14 +98,14 @@ recipeRouter.get('/:id', async (request, response) => {
             if (recipe.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
                 return response.status(200).json(recipe)
             else {
-                return response.status(403).json({ message: "Você não possui este acesso" })
+                return response.status(401).json({ message: "Você não possui este acesso" })
             }
 
         } catch (error) {
             return response.status(500).json({ error: error })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -124,7 +124,7 @@ recipeRouter.patch('/:id', async (request, response) => {
         )
             && (token as UserInterface).role == "normal"
         )
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
 
 
         try {
@@ -139,7 +139,7 @@ recipeRouter.patch('/:id', async (request, response) => {
         }
 
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -165,9 +165,9 @@ recipeRouter.delete('/:id', async (request, response) => {
             }
 
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })

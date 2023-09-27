@@ -22,7 +22,7 @@ dietRouter.post('/', async (request, response) => {
                 if (diet.user == null || diet.user == (token as UserInterface)._id)
                     diet.user = (token as UserInterface)._id
                 else
-                    return response.status(403).json({ message: "Você não pode inserir dieta, de outro usuário" })
+                    return response.status(401).json({ message: "Você não pode inserir dieta, de outro usuário" })
             }
 
             const savedDiet = await Diet.create(diet)
@@ -36,7 +36,7 @@ dietRouter.post('/', async (request, response) => {
             return response.status(500).json({ error: error })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -54,10 +54,10 @@ dietRouter.get('/', async (request, response) => {
                 return response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -78,14 +78,14 @@ dietRouter.get('/:id', async (request, response) => {
             if (diet.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
                 return response.status(200).json(diet)
             else {
-                return response.status(403).json({ message: "Você não possui este acesso" })
+                return response.status(401).json({ message: "Você não possui este acesso" })
             }
 
         } catch (error) {
             return response.status(500).json({ error: error })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -102,7 +102,7 @@ dietRouter.patch('/:id', async (request, response) => {
             (diet.user && (dietUserId?.user != diet.user))
             && (token as UserInterface).role == "normal"
         )
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         try {
 
             await Diet.findByIdAndUpdate(id, diet)
@@ -113,7 +113,7 @@ dietRouter.patch('/:id', async (request, response) => {
             return response.status(500).json({ error: error })
         }
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
 
@@ -137,10 +137,10 @@ dietRouter.delete('/:id', async (request, response) => {
                 return response.status(500).json({ error: error })
             }
         } else {
-            return response.status(403).json({ message: "Você não possui este acesso" })
+            return response.status(401).json({ message: "Você não possui este acesso" })
         }
 
     } else {
-        return response.status(401).json({ message: "Token Inválido" })
+        return response.status(403).json({ message: "Token Inválido" })
     }
 })
