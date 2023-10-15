@@ -12,4 +12,5 @@ export interface RecipeInterface {
     gordura: number
     proteína: number
     user: string
+    modoDePreparo: string
 }
