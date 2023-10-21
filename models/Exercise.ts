@@ -7,7 +7,13 @@ const schema = new mongoose.Schema({
     },
     descricao: String,
     video: String,
-    agrupamento: String,
+    areas: String,
+    intensidade: Number,
+    sets: String,
+    duracao: {
+        type: String,
+        enum: ["Curto", "Longo"]
+    }
 }, { timestamps: true })
 
 export const Exercise = mongoose.model('Exercise', schema)
