@@ -10,6 +10,7 @@ const schema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Recipe'
     }],
+    descricao: String,
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'User',

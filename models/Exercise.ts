@@ -13,6 +13,10 @@ const schema = new mongoose.Schema({
     duracao: {
         type: String,
         enum: ["Curto", "Longo"]
+    },
+    image: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Image'
     }
 }, { timestamps: true })
 

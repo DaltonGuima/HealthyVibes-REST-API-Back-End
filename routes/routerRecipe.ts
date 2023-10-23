@@ -69,7 +69,7 @@ recipeRouter.get('/recipesWIthNoUser', async (request, response) => {
 
     try {
 
-        const recipes = await Recipe.find({ user: null })
+        const recipes = await Recipe.find({ user: null }).populate('image')
 
         return response.status(200).json(recipes)
 
@@ -88,7 +88,7 @@ recipeRouter.get('/:id', async (request, response) => {
 
     if (token) {
         try {
-            const recipe = await Recipe.findById(id)
+            const recipe = await Recipe.findById(id).populate('image')
 
             if (!recipe) {
                 return response.status(422).json({ message: 'A receita não foi encontrada' })

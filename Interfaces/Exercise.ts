@@ -6,4 +6,5 @@ export interface ExerciseInterface {
     intensidade: number,
     sets: string,
     duracao: string,
+    image: string
 }

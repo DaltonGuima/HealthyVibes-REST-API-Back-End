@@ -1,5 +1,3 @@
-// import mongoose from "mongoose";
-
 export interface RecipeInterface {
     periodoRef: string
     titulo: string
@@ -13,4 +11,5 @@ export interface RecipeInterface {
     proteína: number
     user: string
     modoDePreparo: string
+    image: string
 }

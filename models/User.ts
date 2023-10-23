@@ -21,13 +21,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Usuário sem senha"]
     },
-    exercises: [{
-        exercise: {
-            type: mongoose.Types.ObjectId,
-            ref: 'Exercise',
-        },
-        done: Boolean
-    }],
+    exercise: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Exercise',
+    },
     role: {
         type: String,
         enum: ["normal", "admin"],
