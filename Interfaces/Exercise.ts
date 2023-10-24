@@ -2,7 +2,7 @@ export interface ExerciseInterface {
     nome: string,
     descricao: string,
     video: string,
-    areas: string,
+    area: string,
     intensidade: number,
     sets: string,
     duracao: string,

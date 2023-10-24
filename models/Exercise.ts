@@ -7,7 +7,7 @@ const schema = new mongoose.Schema({
     },
     descricao: String,
     video: String,
-    areas: String,
+    area: String,
     intensidade: Number,
     sets: String,
     duracao: {
