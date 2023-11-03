@@ -129,7 +129,7 @@ dietRouter.delete('/:id', async (request, response) => {
     if (token) {
         if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == diet.user) {
             try {
-
+                // Botar um código para excluir receitas, dessa dieta
                 await Diet.findByIdAndDelete(id)
 
                 return response.status(200).json({ message: 'Dieta deletada' })
