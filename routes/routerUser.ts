@@ -101,7 +101,8 @@ userRouter.post('/login', async (request, response) => {
             .json({
                 user: userFound.id,
                 message: "Logado com sucesso",
-                accessToken: `JWT ${token}`
+                accessToken: `JWT ${token}`,
+                userName: userFound.nome
             })
 
 
