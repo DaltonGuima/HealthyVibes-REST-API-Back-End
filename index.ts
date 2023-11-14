@@ -11,10 +11,22 @@ import { dietRouter } from "./routes/routerDiet";
 import { imcRouter } from "./routes/routerImc";
 import 'dotenv/config';
 import { imageRouter } from "./routes/routerImage";
-
+import compression from "compression";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 
 const app = express();
+
+
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 20,
+});
+// Apply rate limiter to all requests
+app.use(limiter);
+
+app.use(compression());
 
 app.use(
     express.urlencoded({
@@ -24,6 +36,15 @@ app.use(
 app.use(express.json());
 
 app.use(cors());
+
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+        },
+    }),
+);
 
 // Rotas
 app.use('/users', userRouter)
