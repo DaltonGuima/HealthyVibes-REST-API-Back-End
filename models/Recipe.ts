@@ -23,6 +23,7 @@ const schema = new mongoose.Schema({
     gordura: Number,
     proteína: Number,
     modoDePreparo: String,
+    descricao: String,
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'User'

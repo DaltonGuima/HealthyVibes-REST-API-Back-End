@@ -12,4 +12,5 @@ export interface RecipeInterface {
     user: string
     modoDePreparo: string
     image: string
+    descricao: string
 }
