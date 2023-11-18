@@ -1,8 +1,9 @@
 {
   "name": "healthy-vibes-back-end",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "tsc",
+    "start": "tsc && node build/index.js",
     "dev": "tsnd --exit-child index.ts"
   },
   "description": "",

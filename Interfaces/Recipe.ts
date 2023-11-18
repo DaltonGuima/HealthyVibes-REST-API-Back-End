@@ -1,10 +1,10 @@
 export interface RecipeInterface {
     periodoRef: string
     titulo: string
-    ingredientes: [
+    ingredientes: [{
         nome: string,
         qtd: string
-    ],
+}],
     calorias: number
     carboidratos: number
     gordura: number
