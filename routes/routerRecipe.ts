@@ -109,6 +109,33 @@ recipeRouter.get('/:id', async (request, response) => {
     }
 })
 
+recipeRouter.get('/recipesWithUser/:idUser', async (request, response) => {
+    const idUser = request.params.idUser
+
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+        try {
+            const recipes = await Recipe.find({user : idUser})
+
+            if (!recipes) {
+                return response.status(422).json({ message: 'Não foram encontradas receitas' })
+            }
+
+            if (idUser == (token as UserInterface)._id || (token as UserInterface).role == "admin")
+                return response.status(200).json(recipes)
+            else {
+                return response.status(401).json({ message: "Você não possui este acesso" })
+            }
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
 // Update - atualização de dados (PUT, PATch)
 
 recipeRouter.patch('/:id', async (request, response) => {
