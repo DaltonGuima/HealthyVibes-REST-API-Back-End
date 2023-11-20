@@ -95,7 +95,10 @@ recipeRouter.get('/:id', async (request, response) => {
 
             }
 
-            if (recipe.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
+            console.log((recipe.user || "").toString())
+            console.log((token as UserInterface).id)
+
+            if ((recipe.user || "").toString() == (token as UserInterface).id || (token as UserInterface).role == "admin")
                 return response.status(200).json(recipe)
             else {
                 return response.status(401).json({ message: "Você não possui este acesso" })
@@ -114,9 +117,12 @@ recipeRouter.get('/recipesWithUser/:idUser', async (request, response) => {
 
     const token = await verifyToken(request.headers.authorization)
 
+
     if (token) {
         try {
             const recipes = await Recipe.find({user : idUser})
+
+    
 
             if (!recipes) {
                 return response.status(422).json({ message: 'Não foram encontradas receitas' })
@@ -180,6 +186,8 @@ recipeRouter.delete('/:id', async (request, response) => {
     }
 
     if (token) {
+
+        
 
         if (recipe.user == (token as UserInterface).id || (token as UserInterface).role == "admin") {
             try {
