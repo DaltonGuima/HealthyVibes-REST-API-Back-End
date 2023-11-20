@@ -95,9 +95,6 @@ recipeRouter.get('/:id', async (request, response) => {
 
             }
 
-            console.log((recipe.user || "").toString())
-            console.log((token as UserInterface).id)
-
             if ((recipe.user || "").toString() == (token as UserInterface).id || (token as UserInterface).role == "admin")
                 return response.status(200).json(recipe)
             else {
