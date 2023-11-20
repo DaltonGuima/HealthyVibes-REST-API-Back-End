@@ -20,8 +20,8 @@ imcRouter.post('/', async (request, response) => {
         try {
 
             if ((token as UserInterface).role == "normal") {
-                if (imc.user == null || imc.user == (token as UserInterface)._id)
-                    imc.user = (token as UserInterface)._id
+                if (imc.user == null || imc.user == (token as UserInterface).id)
+                    imc.user = (token as UserInterface).id
                 else
                     return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
             }
@@ -82,7 +82,7 @@ imcRouter.get('/:id', async (request, response) => {
 
             }
 
-            if (imc.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
+            if (imc.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
                 return response.status(200).json(imc)
             else
                 return response.status(401).json({ message: "Você não possui este acesso" })
@@ -144,7 +144,7 @@ imcRouter.delete('/:id', async (request, response) => {
 
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == imc.user) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == imc.user) {
             try {
 
                 await Imc.findByIdAndDelete(id)

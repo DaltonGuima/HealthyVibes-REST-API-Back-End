@@ -144,7 +144,7 @@ userRouter.get('/:id', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
                 const user = await User.findById(id)
@@ -174,7 +174,7 @@ userRouter.get('/:id/diets', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
 
@@ -205,7 +205,7 @@ userRouter.get('/:id/imcs', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
                 const user = await User.findById(id).populate('imcs')
@@ -234,7 +234,7 @@ userRouter.get('/:id/exercises', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
                 const user = await User.findById(id).populate({
@@ -266,7 +266,7 @@ userRouter.get('/:id/consumptions', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
                 const user = await User.findById(id).populate('consumptions')
@@ -303,7 +303,7 @@ userRouter.patch('/:id', async (request, response) => {
 
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
 
             try {
 
@@ -340,7 +340,7 @@ userRouter.delete('/:id', async (request, response) => {
     }
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
 
             try {
 

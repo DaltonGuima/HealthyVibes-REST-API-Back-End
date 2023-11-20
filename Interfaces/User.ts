@@ -1,6 +1,6 @@
 export interface UserInterface {
-    _id: string,
-    nom: string,
+    id: string,
+    nome: string,
     email: string,
     senha: string,
     role: string,

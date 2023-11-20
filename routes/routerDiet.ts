@@ -19,8 +19,8 @@ dietRouter.post('/', async (request, response) => {
         try {
 
             if ((token as UserInterface).role == "normal") {
-                if (diet.user == null || diet.user == (token as UserInterface)._id)
-                    diet.user = (token as UserInterface)._id
+                if (diet.user == null || diet.user == (token as UserInterface).id)
+                    diet.user = (token as UserInterface).id
                 else
                     return response.status(401).json({ message: "Você não pode inserir dieta, de outro usuário" })
             }
@@ -75,7 +75,7 @@ dietRouter.get('/:id', async (request, response) => {
 
             }
 
-            if (diet.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
+            if (diet.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
                 return response.status(200).json(diet)
             else {
                 return response.status(401).json({ message: "Você não possui este acesso" })
@@ -127,7 +127,7 @@ dietRouter.delete('/:id', async (request, response) => {
     }
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == diet.user) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == diet.user) {
             try {
                 // Botar um código para excluir receitas, dessa dieta
                 await Diet.findByIdAndDelete(id)

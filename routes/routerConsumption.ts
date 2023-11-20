@@ -15,8 +15,8 @@ consumptionRouter.post('/', async (request, response) => {
         try {
 
             if ((token as UserInterface).role == "normal") {
-                if (consumption.user == null || consumption.user == (token as UserInterface)._id)
-                    consumption.user = (token as UserInterface)._id
+                if (consumption.user == null || consumption.user == (token as UserInterface).id)
+                    consumption.user = (token as UserInterface).id
                 else
                     return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
             }
@@ -73,7 +73,7 @@ consumptionRouter.get('/:id', async (request, response) => {
                 return response.status(422).json({ message: 'Valores de consumo não foram encontrados' })
 
             }
-            if (consumption.user == (token as UserInterface)._id || (token as UserInterface).role == "admin")
+            if (consumption.user == (token as UserInterface).id || (token as UserInterface).role == "admin")
                 return response.status(200).json(consumption)
             else
                 return response.status(401).json({ message: "Você não possui este acesso" })
@@ -130,7 +130,7 @@ consumptionRouter.delete('/:id', async (request, response) => {
     }
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface)._id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
             try {
 
                 await Consumption.findByIdAndDelete(id)
