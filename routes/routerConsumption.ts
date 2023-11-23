@@ -58,6 +58,26 @@ consumptionRouter.get('/', async (request, response) => {
     }
 })
 
+consumptionRouter.get('/myConsumptions', async (request, response) => {
+
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            const consumptions = await Consumption.findById((token as UserInterface).id)
+            return response.status(200).json(consumptions)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
 consumptionRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
@@ -66,7 +86,6 @@ consumptionRouter.get('/:id', async (request, response) => {
     if (token) {
 
         try {
-            // findONe({ _id: id})
             const consumption = await Consumption.findById(id)
 
             if (!consumption) {

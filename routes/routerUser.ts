@@ -25,10 +25,10 @@ userRouter.post('/', async (request, response) => {
     try {
 
         if (!token || (token as UserInterface).role == "normal") {
-/*             if (user.role == "admin")
-                return response.status(403).json({ message: "Você não pode definir role como admin" })
-            else */
-                user.role = "normal"
+            /*             if (user.role == "admin")
+                            return response.status(403).json({ message: "Você não pode definir role como admin" })
+                        else */
+            user.role = "normal"
         }
 
 
@@ -270,7 +270,6 @@ userRouter.get('/:id/consumptions', async (request, response) => {
             try {
 
                 const user = await User.findById(id).populate('consumptions')
-
 
                 if (!user) {
                     return response.status(422).json({ message: 'O usuário não foi encontrado' })
