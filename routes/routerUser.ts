@@ -84,7 +84,7 @@ userRouter.post('/login', async (request, response) => {
             return response.status(401)
                 .json({
                     accessToken: null,
-                    message: "Invalid Password!"
+                    message: "Senha inválida"
                 });
         }
 
