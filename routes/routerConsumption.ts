@@ -165,3 +165,32 @@ consumptionRouter.delete('/:id', async (request, response) => {
         return response.status(403).json({ message: "Token Inválido" })
     }
 })
+
+consumptionRouter.get('/addIot/:value', async (request, response) => {
+    const value = request.params.value
+    // const verify = await Consumption.find({ createdAt: Date.now() })
+
+    try {
+        if (Number(value)) {
+            const consumption: ConsumptionInterface = {
+                quantidade: 200,
+                tipoConsumo: "Água",
+                user: "65541625e2d59c001cf93040"
+            }
+
+            const savedConsumption = await Consumption.create(consumption)
+            return response.status(201).json({
+                saveID: savedConsumption.id,
+                message: 'Valor de consumo inserido no sistema'
+            })
+
+        }
+        else {
+            return response.status(403).json({ message: "Somente número ou valor > 0" })
+        }
+
+    } catch (error) {
+        return response.status(500).json({ error: error })
+    }
+
+})
