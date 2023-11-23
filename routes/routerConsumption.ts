@@ -152,7 +152,7 @@ consumptionRouter.get('/addIot/:value', async (request, response) => {
     // const verify = await Consumption.find({ createdAt: Date.now() })
 
     try {
-        if (Number(value) && Number(value) > 0) {
+        if (Number(value)) {
             const consumption: ConsumptionInterface = {
                 quantidade: 200,
                 tipoConsumo: "Água",
