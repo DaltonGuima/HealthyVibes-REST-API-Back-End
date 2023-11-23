@@ -149,12 +149,12 @@ consumptionRouter.delete('/:id', async (request, response) => {
 
 consumptionRouter.get('/addIot/:value', async (request, response) => {
     const value = request.params.value
-    const verify = await Consumption.find({ createdAt: Date.now() })
+    // const verify = await Consumption.find({ createdAt: Date.now() })
 
     try {
-        if (Number(value) && Number(value) > 0 && !verify) {
+        if (Number(value) && Number(value) > 0) {
             const consumption: ConsumptionInterface = {
-                quantidade: 2000,
+                quantidade: 200,
                 tipoConsumo: "Água",
                 user: "65541625e2d59c001cf93040"
             }
