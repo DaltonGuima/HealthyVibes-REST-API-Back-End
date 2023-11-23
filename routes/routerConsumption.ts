@@ -166,7 +166,7 @@ consumptionRouter.get('/addIot/:value', async (request, response) => {
 
         }
         else {
-            return response.status(403).json({ message: "Somente número" })
+            return response.status(403).json({ message: "Somente número ou valor > 0" })
         }
 
     } catch (error) {
