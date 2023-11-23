@@ -69,9 +69,9 @@ userRouter.post('/login', async (request, response) => {
         const userFound = await User.findOne({ email: user.email })
 
         if (!userFound) {
-            return response.status(404)
+            return response.status(401)
                 .json({
-                    message: 'O usuário não foi encontrado.'
+                    message: 'O usuário Inválido.'
                 });
         }
 
