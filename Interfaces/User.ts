@@ -4,5 +4,4 @@ export interface UserInterface {
     email: string,
     senha: string,
     role: string,
-    exercises: [{ _id: string, done: boolean }]
 }
