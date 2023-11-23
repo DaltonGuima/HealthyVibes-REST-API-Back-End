@@ -6,6 +6,7 @@ const schema = new mongoose.Schema({
         required: [true, "Nome necessário"]
     },
     descricao: String,
+    descricaoCurta: String,
     video: String,
     area: String,
     intensidade: Number,
