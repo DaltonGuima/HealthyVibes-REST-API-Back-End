@@ -66,7 +66,7 @@ consumptionRouter.get('/myConsumptions', async (request, response) => {
 
         try {
 
-            const consumptions = await Consumption.findById((token as UserInterface).id)
+            const consumptions = await Consumption.find({ user: (token as UserInterface).id })
             return response.status(200).json(consumptions)
 
         } catch (error) {
