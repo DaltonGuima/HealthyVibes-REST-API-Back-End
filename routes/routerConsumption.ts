@@ -78,6 +78,45 @@ consumptionRouter.get('/myConsumptions', async (request, response) => {
     }
 })
 
+consumptionRouter.get('/myConsumptions/water', async (request, response) => {
+
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            const consumptions = await Consumption.find({ user: (token as UserInterface).id, tipoConsumo: "Água" })
+            return response.status(200).json(consumptions)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+consumptionRouter.get('/myConsumptions/cal', async (request, response) => {
+
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            const consumptions = await Consumption.find({ user: (token as UserInterface).id, tipoConsumo: "Calorias" })
+            return response.status(200).json(consumptions)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
 consumptionRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
