@@ -14,10 +14,10 @@ import { imageRouter } from "./routes/routerImage";
 import compression from "compression";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import fs from 'fs';
+/* import fs from 'fs';
 const path = './build/uploads'
 
-
+imagens em prod n deu certo
 fs.access(path, (error) => {
 
     // To check if given directory  
@@ -35,7 +35,7 @@ fs.access(path, (error) => {
         console.log("Given Directory already exists !!");
     }
 });
-
+ */
 
 const app = express();
 
