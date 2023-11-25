@@ -15,7 +15,6 @@ imageRouter.post('/', upload.single('image'), async (request, response) => {
     const img: ImageInterface = request.body
 
 
-
     img.img = {
         data: fs.readFileSync(path.join(__dirname, '..', 'uploads', request.file?.filename || "")),
         contentType: 'image/png'
