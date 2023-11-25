@@ -62,6 +62,7 @@ consumptionRouter.get('/myConsumptions', async (request, response) => {
 
     const token = await verifyToken(request.headers.authorization)
 
+
     if (token) {
 
         try {

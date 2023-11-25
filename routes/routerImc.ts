@@ -1,8 +1,9 @@
 import { Router } from "express"
-import { Imc } from "../models/Imc"
 import { ImcInterface } from "../Interfaces/Imc"
-import { verifyToken } from "../middlewares/authJWT"
 import { UserInterface } from "../Interfaces/User"
+import { verifyToken } from "../middlewares/authJWT"
+import { Imc } from "../models/Imc"
+
 
 export const imcRouter = Router()
 
@@ -68,6 +69,27 @@ imcRouter.get('/', async (request, response) => {
     }
 })
 
+imcRouter.get('/myImcs', async (request, response) => {
+    const token = await verifyToken(request.headers.authorization)
+
+
+    if (token) {
+
+        try {
+
+            const imcs = await Imc.find({ user: (token as UserInterface).id })
+            return response.status(200).json(imcs)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+
+})
+
 imcRouter.get('/:id', async (request, response) => {
     const id = request.params.id
 
@@ -95,25 +117,7 @@ imcRouter.get('/:id', async (request, response) => {
     }
 })
 
-imcRouter.get('/myImcs', async (request, response) => {
 
-    const token = await verifyToken(request.headers.authorization)
-
-    if (token) {
-
-        try {
-
-            const imc = await Imc.find({ user: (token as UserInterface).id })
-            return response.status(200).json(imc)
-
-        } catch (error) {
-            return response.status(500).json({ error: error })
-        }
-
-    } else {
-        return response.status(403).json({ message: "Token Inválido" })
-    }
-})
 
 // Update - atualização de dados (PUT, PATch)
 
