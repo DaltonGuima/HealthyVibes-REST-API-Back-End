@@ -214,7 +214,7 @@ consumptionRouter.get('/addIot/:value', async (request, response) => {
             const consumption: ConsumptionInterface = {
                 quantidade: 200,
                 tipoConsumo: "Água",
-                user: "65541625e2d59c001cf93040"
+                user: "6561376e0a1894fe0bce5687"
             }
 
             const savedConsumption = await Consumption.create(consumption)
