@@ -22,7 +22,7 @@ imageRouter.post('/', upload.single('image'), async (request, response) => {
     }
 
 
-    if (!token) {
+    if (token) {
         try {
             const savedImg = await Image.create(img)
 
