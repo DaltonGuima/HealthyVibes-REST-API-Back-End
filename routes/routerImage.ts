@@ -14,16 +14,18 @@ imageRouter.post('/', upload.single('image'), async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
     const img: ImageInterface = request.body
 
-    if (img.img)
-        img.img = {
-            data: fs.readFileSync(path.join(__dirname, '..', 'uploads', request.file?.filename || "")),
-            contentType: 'image/png'
-        }
 
 
-    if (token) {
+    img.img = {
+        data: fs.readFileSync(path.join(__dirname, '..', 'uploads', request.file?.filename || "")),
+        contentType: 'image/png'
+    }
+
+
+    if (!token) {
         try {
             const savedImg = await Image.create(img)
+
 
             return response.status(201).json({
                 savedID: savedImg,
