@@ -189,7 +189,7 @@ consumptionRouter.delete('/:id', async (request, response) => {
     }
 
     if (token) {
-        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == id) {
+        if ((token as UserInterface).role == "admin" || (token as UserInterface).id == consumption.user) {
             try {
 
                 await Consumption.findByIdAndDelete(id)
