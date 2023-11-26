@@ -167,6 +167,26 @@ userRouter.get('/:id', async (request, response) => {
     }
 })
 
+userRouter.get('/myUser', async (request, response) => {
+
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            const user = await User.findById((token as UserInterface).id)
+            return response.status(200).json(user)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(400).json({ message: "Token Inválido ou esgotado" })
+    }
+})
+
 
 userRouter.get('/:id/diets', async (request, response) => {
     const id = request.params.id

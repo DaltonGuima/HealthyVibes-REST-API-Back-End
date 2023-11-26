@@ -166,7 +166,6 @@ imcRouter.delete('/:id', async (request, response) => {
         return response.status(422).json({ message: 'O imc não foi encontrado' })
     }
 
-
     if (token) {
         if ((token as UserInterface).role == "admin" || (token as UserInterface).id == imc.user) {
             try {
