@@ -145,8 +145,8 @@ userRouter.get('/myuser', async (request, response) => {
 
         try {
 
-            const imcs = await User.findById((token as UserInterface).id)
-            return response.status(200).json(imcs)
+            const user = await User.findById((token as UserInterface).id)
+            return response.status(200).json(user)
 
         } catch (error) {
             return response.status(500).json({ error: error })
