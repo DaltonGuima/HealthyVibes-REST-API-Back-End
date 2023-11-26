@@ -12,6 +12,10 @@ const schema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: [true, "Usuário necessário"]
+    },
+    belongDate: {
+        type: Date,
+        required: [true, "Data necessária"]
     }
 }, { timestamps: true })
 
