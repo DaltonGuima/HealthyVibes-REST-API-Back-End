@@ -36,6 +36,20 @@ exerciseRouter.get("/", async (request, response) => {
 
     try {
 
+        const exercises = await Exercise.find()
+        return response.status(200).json(exercises)
+
+    } catch (error) {
+        return response.status(500).json({ error: error })
+    }
+
+});
+
+exerciseRouter.get("/withImage", async (request, response) => {
+
+
+    try {
+
         const exercises = await Exercise.find().populate('image')
         return response.status(200).json(exercises)
 

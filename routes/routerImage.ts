@@ -26,7 +26,7 @@ imageRouter.post('/', upload.single('image'), async (request, response) => {
             const savedImg = await Image.create(img)
 
             return response.status(201).json({
-                savedID: savedImg,
+                savedID: savedImg.id,
                 message: 'Imagem inserida no sistema'
             })
         }
