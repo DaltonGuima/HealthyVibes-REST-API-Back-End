@@ -18,12 +18,12 @@ dietRouter.post('/', async (request, response) => {
     if (token) {
         try {
 
-            if ((token as UserInterface).role == "normal") {
-                if (diet.user == null || diet.user == (token as UserInterface).id)
-                    diet.user = (token as UserInterface).id
-                else
-                    return response.status(401).json({ message: "Você não pode inserir dieta, de outro usuário" })
+            if (diet.user == null) {
+                diet.user = (token as UserInterface).id
             }
+
+            if ((token as UserInterface).role == "normal" && diet.user != (token as UserInterface).id)
+                return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
 
             const savedDiet = await Diet.create(diet)
 
