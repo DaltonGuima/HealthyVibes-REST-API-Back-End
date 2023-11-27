@@ -18,7 +18,7 @@ function checkFileType(file: Express.Multer.File, cb: multer.FileFilterCallback)
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads')
+        cb(null, 'build/uploads')
     },
     filename: (req, file, cb) => {
         cb(null, file.fieldname + '-' + Date.now())
