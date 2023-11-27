@@ -11,6 +11,7 @@ const schema = new mongoose.Schema({
         ref: 'Recipe'
     }],
     descricao: String,
+    opcaoPeso: String,
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
