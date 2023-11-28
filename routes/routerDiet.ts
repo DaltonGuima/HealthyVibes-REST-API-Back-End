@@ -61,6 +61,25 @@ dietRouter.get('/', async (request, response) => {
     }
 })
 
+dietRouter.get('/myDiets', async (request, response) => {
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            const diets = await Diet.find({ user: (token as UserInterface).id })
+            return response.status(200).json(diets)
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
 dietRouter.get('/:id', async (request, response) => {
     const id = request.params.id
     const token = await verifyToken(request.headers.authorization)
