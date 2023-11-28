@@ -9,7 +9,6 @@ const schema = new mongoose.Schema({
     descricaoCurta: String,
     video: String,
     area: String,
-    intensidade: Number,
     sets: String,
     duracao: {
         type: String,
