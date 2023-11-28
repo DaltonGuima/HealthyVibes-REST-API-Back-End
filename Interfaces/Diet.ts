@@ -3,5 +3,5 @@ export interface DietInterface {
     recipes: [string],
     user: string
     opcaoPeso: string,
-
+    descricao: string,
 }
