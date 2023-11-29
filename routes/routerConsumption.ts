@@ -19,7 +19,7 @@ consumptionRouter.post('/', async (request, response) => {
             }
 
             if ((token as UserInterface).role == "normal" && consumption.user != (token as UserInterface).id)
-                return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
+                return response.status(401).json({ message: "Você não pode inserir consummo, de outro usuário" })
 
             const savedConsumption = await Consumption.create(consumption)
             return response.status(201).json({
