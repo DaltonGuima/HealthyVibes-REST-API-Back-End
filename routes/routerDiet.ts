@@ -87,7 +87,14 @@ dietRouter.get('/:id', async (request, response) => {
     if (token) {
         try {
             // findONe({ _id: id})
-            const diet = await Diet.findById(id).populate('recipes').populate('image')
+            const diet = await Diet.findById(id).populate({
+                path: 'recipes',
+                model: 'Recipe',
+                populate: {
+                    path: 'image',
+                    model: 'Image',
+                }
+            })
 
             if (!diet) {
                 return response.status(422).json({ message: 'A dieta não foi encontrada' })
