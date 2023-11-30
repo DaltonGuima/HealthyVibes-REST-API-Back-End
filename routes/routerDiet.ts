@@ -68,7 +68,7 @@ dietRouter.get('/myDiets', async (request, response) => {
 
         try {
 
-            const diets = await Diet.find({ user: (token as UserInterface).id })
+            const diets = await Diet.find({ user: (token as UserInterface).id }).populate('recipes')
             return response.status(200).json(diets)
 
         } catch (error) {
