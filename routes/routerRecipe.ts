@@ -18,12 +18,12 @@ recipeRouter.post('/', async (request, response) => {
         try {
 
 
-            if ((token as UserInterface).role == "normal") {
-                if (recipe.user == null || recipe.user == (token as UserInterface).id)
-                    recipe.user = (token as UserInterface).id
-                else
-                    return response.status(401).json({ message: "Você não pode inserir receita, de outro usuário" })
+            if (recipe.user == null) {
+                recipe.user = (token as UserInterface).id
             }
+
+            if ((token as UserInterface).role == "normal" && recipe.user != (token as UserInterface).id)
+                return response.status(401).json({ message: "Você não pode inserir dieta, de outro usuário" })
 
             const savedRecipe = await Recipe.create(recipe)
 
@@ -31,6 +31,37 @@ recipeRouter.post('/', async (request, response) => {
                 savedID: savedRecipe.id,
                 message: 'Receita inserida no sistema'
             })
+
+        } catch (error) {
+            return response.status(500).json({ error: error })
+
+        }
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
+recipeRouter.post('/admin', async (request, response) => {
+    //req.body
+    const recipe: RecipeInterface = request.body
+
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            if ((token as UserInterface).role == "admin") {
+                const savedRecipe = await Recipe.create(recipe)
+
+                return response.status(201).json({
+                    savedID: savedRecipe.id,
+                    message: 'Receita inserida no sistema'
+                })
+            }
+            else {
+                return response.status(401).json({ message: "Você não possui este acesso" })
+            }       
 
         } catch (error) {
             return response.status(500).json({ error: error })

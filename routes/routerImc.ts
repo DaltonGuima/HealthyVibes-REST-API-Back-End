@@ -20,12 +20,14 @@ imcRouter.post('/', async (request, response) => {
     if (token) {
         try {
 
-            if ((token as UserInterface).role == "normal") {
-                if (imc.user == null || imc.user == (token as UserInterface).id)
-                    imc.user = (token as UserInterface).id
-                else
-                    return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
+            if (imc.user == null) {
+                imc.user = (token as UserInterface).id
             }
+
+            if ((token as UserInterface).role == "normal" && imc.user != (token as UserInterface).id)
+                return response.status(401).json({ message: "Você não pode inserir imc, de outro usuário" })
+
+            
 
             const IMCvalue = {
                 ...imc,
