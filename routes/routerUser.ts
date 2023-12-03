@@ -384,8 +384,8 @@ userRouter.patch('/:id', async (request, response) => {
 })
 
 userRouter.patch('/myuser', async (request, response) => {
-    const token = await verifyToken(request.headers.authorization)
     const user: UserInterface = request.body
+    const token = await verifyToken(request.headers.authorization)
 
     if (user.senha) {
         const senhaHash = await bcrypt.hash(user.senha, 10)
