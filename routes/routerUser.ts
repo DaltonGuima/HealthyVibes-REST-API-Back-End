@@ -415,7 +415,9 @@ userRouter.patch('/myuser', async (request, response) => {
     } else {
         return response.status(403).json({ message: "Token Inválido" })
     }
+
 })
+
 
 userRouter.delete('/myuser', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
