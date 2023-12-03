@@ -117,7 +117,7 @@ userRouter.post('/login', async (request, response) => {
 })
 
 
-userRouter.post('/verifyPasswrod', async (request, response) => {
+userRouter.post('/verifyPassword', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
     const user: UserInterface = request.body
 
