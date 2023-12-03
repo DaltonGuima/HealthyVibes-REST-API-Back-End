@@ -344,6 +344,42 @@ userRouter.get('/:id/consumptions', async (request, response) => {
 
 // Update - atualização de dados (PUT, PATch)
 
+userRouter.patch("/myuser", async (request, response) => {
+    console.log("Entrou aqui")
+    const user: UserInterface = request.body
+    const token = await verifyToken(request.headers.authorization)
+
+    if (user.senha) {
+        const senhaHash = await bcrypt.hash(user.senha, 10)
+        user.senha = senhaHash
+    }
+
+
+    if (token) {
+        console.log("Entrou aqui")
+        try {
+
+            await User.findByIdAndUpdate((token as UserInterface).id, user)
+
+            return response.status(200).json(user)
+
+        } catch (error: unknown) {
+
+            if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
+                return response.status(500).json({
+                    error: error,
+                    message: "Email já cadastrado"
+                })
+
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+
+})
+
 userRouter.patch('/:id', async (request, response) => {
     const id = request.params.id // se alterar em cima altera o parâmetro
     const token = await verifyToken(request.headers.authorization)
@@ -383,40 +419,7 @@ userRouter.patch('/:id', async (request, response) => {
     }
 })
 
-userRouter.patch('/myuser', async (request, response) => {
-    const user: UserInterface = request.body
-    const token = await verifyToken(request.headers.authorization)
 
-    if (user.senha) {
-        const senhaHash = await bcrypt.hash(user.senha, 10)
-        user.senha = senhaHash
-    }
-
-
-    if (token) {
-
-        try {
-
-            await User.findByIdAndUpdate((token as UserInterface).id, user)
-
-            return response.status(200).json(user)
-
-        } catch (error: unknown) {
-
-            if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
-                return response.status(500).json({
-                    error: error,
-                    message: "Email já cadastrado"
-                })
-
-            return response.status(500).json({ error: error })
-        }
-
-    } else {
-        return response.status(403).json({ message: "Token Inválido" })
-    }
-
-})
 
 
 userRouter.delete('/myuser', async (request, response) => {
