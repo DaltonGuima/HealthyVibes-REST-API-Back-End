@@ -345,7 +345,6 @@ userRouter.get('/:id/consumptions', async (request, response) => {
 // Update - atualização de dados (PUT, PATch)
 
 userRouter.patch("/myuser", async (request, response) => {
-    console.log("Entrou aqui")
     const user: UserInterface = request.body
     const token = await verifyToken(request.headers.authorization)
 
@@ -356,7 +355,7 @@ userRouter.patch("/myuser", async (request, response) => {
 
 
     if (token) {
-        console.log("Entrou aqui")
+
         try {
 
             await User.findByIdAndUpdate((token as UserInterface).id, user)
