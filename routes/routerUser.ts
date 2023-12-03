@@ -383,6 +383,62 @@ userRouter.patch('/:id', async (request, response) => {
     }
 })
 
+userRouter.patch('/myuser', async (request, response) => {
+    const token = await verifyToken(request.headers.authorization)
+    const user: UserInterface = request.body
+
+    if (user.senha) {
+        const senhaHash = await bcrypt.hash(user.senha, 10)
+        user.senha = senhaHash
+    }
+
+
+    if (token) {
+
+        try {
+
+            await User.findByIdAndUpdate((token as UserInterface).id, user)
+
+            return response.status(200).json(user)
+
+        } catch (error: unknown) {
+
+            if ((error as ErrorDescription).code == 11000 && (error as ErrorDescription).keyPattern.email == 1)
+                return response.status(500).json({
+                    error: error,
+                    message: "Email já cadastrado"
+                })
+
+            return response.status(500).json({ error: error })
+        }
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
+userRouter.delete('/myuser', async (request, response) => {
+    const token = await verifyToken(request.headers.authorization)
+
+    if (token) {
+
+        try {
+
+            await User.findByIdAndDelete((token as UserInterface).id)
+
+            return response.status(200).json({ message: 'Usuário deletado' })
+        } catch (error) {
+
+            return response.status(500).json({ error: error })
+
+        }
+
+    } else {
+
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
 userRouter.delete('/:id', async (request, response) => {
     const id = request.params.id
     const token = await verifyToken(request.headers.authorization)
