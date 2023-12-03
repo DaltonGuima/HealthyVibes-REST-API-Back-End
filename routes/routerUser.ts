@@ -137,7 +137,6 @@ userRouter.post('/verifyPassword', async (request, response) => {
         if (!passwordIsValid) {
             return response.status(401)
                 .json({
-                    accessToken: null,
                     message: "Senha inválida"
                 });
         }
