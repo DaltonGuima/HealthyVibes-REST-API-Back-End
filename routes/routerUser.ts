@@ -117,6 +117,42 @@ userRouter.post('/login', async (request, response) => {
 })
 
 
+userRouter.post('/verifyPasswrod', async (request, response) => {
+    const token = await verifyToken(request.headers.authorization)
+    const user: UserInterface = request.body
+
+    if (token) {
+
+        if (!user.senha)
+            return response.status(404)
+                .json({
+                    message: 'Senha não informada.'
+                });
+
+        const passwordIsValid = bcrypt.compareSync(
+            user.senha,
+            (token as UserInterface).senha || ""
+        );
+
+        if (!passwordIsValid) {
+            return response.status(401)
+                .json({
+                    accessToken: null,
+                    message: "Senha inválida"
+                });
+        }
+
+        return response.status(200)
+            .json({
+                message: "Senha válida"
+            })
+
+
+    } else {
+        return response.status(403).json({ message: "Token Inválido" })
+    }
+})
+
 userRouter.get('/', async (request, response) => {
     const token = await verifyToken(request.headers.authorization)
 
