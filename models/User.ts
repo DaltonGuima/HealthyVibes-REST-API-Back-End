@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
         type: String,
         validate: {
             validator: (v: string) => {
-                return /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/.test(v)
+                return /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)+$/.test(v)
             },
             message: "Email inválido"
         },
