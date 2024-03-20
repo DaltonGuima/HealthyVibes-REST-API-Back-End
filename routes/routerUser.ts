@@ -24,10 +24,10 @@ userRouter.post('/', async (request, response) => {
 
     try {
         // || (token as UserInterface).role == "normal"
-        if (!token) {
-            /*             if (user.role == "admin")
+        if (!token || (token as UserInterface).role == "normal") {
+                         if (user.role == "admin")
                             return response.status(403).json({ message: "Você não pode definir role como admin" })
-                        else */
+                        else 
             user.role = "normal"
         }
 
