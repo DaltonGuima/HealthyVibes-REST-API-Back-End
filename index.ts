@@ -66,6 +66,8 @@ app.use(
     }),
 );
 
+mongoose.set("strictQuery", false);
+
 // Rotas
 app.use('/users', userRouter)
 app.use('/recipes', recipeRouter)
@@ -75,23 +77,29 @@ app.use('/consumptions', consumptionRouter)
 app.use('/imcs', imcRouter)
 app.use('/images', imageRouter)
 
+main().catch((err) => console.log(err));
+async function main() {
 
-mongoose
-    .connect(
-        url, { dbName: "HealthyVibesBD" }
-    )
-    .then(() => {
-        app.listen(process.env.Port, () => {
-            console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
-                "! \nEscutando na porta:", process.env.Port);
-        });
+    await mongoose
+        .connect(
+            url, { dbName: "HealthyVibesBD" }
+        )
+        .then(() => {
+            app.listen(process.env.Port, () => {
+                console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
+                    "! \nEscutando na porta:", process.env.Port);
+            });
+        })
+        .catch(err => console.log("PUTZ GRILA!!!\n", err));
+
+    axios.get("https://api.ipify.org?format=json").then(response => {
+        console.log("\nseu ip é =", response.data);
     })
-    .catch(err => console.log("PUTZ GRILA!!!\n", err));
+        .catch();
 
-axios.get("https://api.ipify.org?format=json").then(response => {
-    console.log("\nseu ip é =", response.data);
-})
-    .catch();
+}
+
+
 
 
 
