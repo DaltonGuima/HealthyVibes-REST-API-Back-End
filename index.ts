@@ -74,14 +74,16 @@ app.use('/consumptions', consumptionRouter)
 app.use('/imcs', imcRouter)
 app.use('/images', imageRouter)
 
+const port = Number(process.env.PORT) || 3000;
+
 mongoose
     .connect(
         url, { dbName: "HealthyVibesBD" }
     )
     .then(() => {
-        app.listen(3000, "0.0.0.0", () => {
+        app.listen(port, "0.0.0.0", () => {
             console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
-                "! \nEscutando na porta:", 3000);
+                "! \nEscutando na porta:", port);
         });
     })
     .catch(err => console.log("PUTZ GRILA!!!\n", err));
