@@ -30,8 +30,6 @@ fs.access(path, (error) => {
                 console.log("New Directory created successfully !!");
             }
         });
-    } else {
-        console.log("Given Directory already exists !!");
     }
 });
 
@@ -66,7 +64,23 @@ app.use(
     }),
 );
 
-mongoose.set("strictQuery", false);
+mongoose
+    .connect(
+        url, { dbName: "HealthyVibesBD" }
+    )
+    .then(() => {
+        app.listen(3000, "0.0.0.0", () => {
+            console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
+                "! \nEscutando na porta:", 3000);
+        });
+    })
+    .catch(err => console.log("PUTZ GRILA!!!\n", err));
+
+axios.get("https://api.ipify.org?format=json").then(response => {
+    console.log("\nseu ip é =", response.data);
+})
+    .catch();
+
 
 // Rotas
 app.use('/users', userRouter)
@@ -77,27 +91,8 @@ app.use('/consumptions', consumptionRouter)
 app.use('/imcs', imcRouter)
 app.use('/images', imageRouter)
 
-main().catch((err) => console.log(err));
-async function main() {
 
-    await mongoose
-        .connect(
-            url, { dbName: "HealthyVibesBD" }
-        )
-        .then(() => {
-            app.listen(3000, "0.0.0.0", () => {
-                console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
-                    "! \nEscutando na porta:", 3000);
-            });
-        })
-        .catch(err => console.log("PUTZ GRILA!!!\n", err));
 
-    axios.get("https://api.ipify.org?format=json").then(response => {
-        console.log("\nseu ip é =", response.data);
-    })
-        .catch();
-
-}
 
 
 
