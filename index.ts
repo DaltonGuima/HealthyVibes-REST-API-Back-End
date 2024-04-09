@@ -64,6 +64,16 @@ app.use(
     }),
 );
 
+
+// Rotas
+app.use('/users', userRouter)
+app.use('/recipes', recipeRouter)
+app.use('/exercises', exerciseRouter)
+app.use('/diets', dietRouter)
+app.use('/consumptions', consumptionRouter)
+app.use('/imcs', imcRouter)
+app.use('/images', imageRouter)
+
 mongoose
     .connect(
         url, { dbName: "HealthyVibesBD" }
@@ -80,17 +90,6 @@ axios.get("https://api.ipify.org?format=json").then(response => {
     console.log("\nseu ip é =", response.data);
 })
     .catch();
-
-
-// Rotas
-app.use('/users', userRouter)
-app.use('/recipes', recipeRouter)
-app.use('/exercises', exerciseRouter)
-app.use('/diets', dietRouter)
-app.use('/consumptions', consumptionRouter)
-app.use('/imcs', imcRouter)
-app.use('/images', imageRouter)
-
 
 
 
