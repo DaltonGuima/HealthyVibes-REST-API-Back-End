@@ -78,17 +78,18 @@ mongoose
     .connect(
         url, { dbName: "HealthyVibesBD" }
     )
+    .then(() => {
+        app.listen(3000, "0.0.0.0", () => {
+            console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
+                "! \nEscutando na porta:", 3000);
+        });
+    })
     .catch(err => console.log("PUTZ GRILA!!!\n", err));
 
 axios.get("https://api.ipify.org?format=json").then(response => {
     console.log("\nseu ip é =", response.data);
 })
     .catch();
-
-app.listen(3000, "0.0.0.0", () => {
-    console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
-        "! \nEscutando na porta:", 3000);
-});
 
 
 
