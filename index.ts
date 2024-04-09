@@ -85,9 +85,9 @@ async function main() {
             url, { dbName: "HealthyVibesBD" }
         )
         .then(() => {
-            app.listen(process.env.Port, () => {
+            app.listen(3000, "0.0.0.0", () => {
                 console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
-                    "! \nEscutando na porta:", process.env.Port);
+                    "! \nEscutando na porta:", 3000);
             });
         })
         .catch(err => console.log("PUTZ GRILA!!!\n", err));
