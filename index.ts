@@ -81,7 +81,7 @@ mongoose
         url, { dbName: "HealthyVibesBD" }
     )
     .then(() => {
-        app.listen(port, "0.0.0.0", () => {
+        app.listen(port, '0.0.0.0', () => {
             console.log("\nConectado com sucesso no Mongo com usuário: ", DB_USER +
                 "! \nEscutando na porta:", port);
         });
